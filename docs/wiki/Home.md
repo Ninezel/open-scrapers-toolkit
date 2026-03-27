@@ -4,8 +4,6 @@ Open Scrapers Toolkit is the reusable backend of the Open Scrapers ecosystem. It
 
 This wiki is the long-form guide for contributors, maintainers, and power users. The README is the fast entry point. These pages explain the real workflow, the project rules, and the conventions that keep the toolkit sustainable as the scraper catalog grows.
 
-![Open Scrapers Toolkit catalog overview](images/toolkit-catalog-overview.svg)
-
 ## Who this repository is for
 
 - Developers who want to run a scraper from the command line.
@@ -73,16 +71,6 @@ npx tsx src/cli.ts list --format json
 ```
 
 That JSON catalog is what the desktop app consumes when it loads the available scraper list.
-
-![Toolkit CLI run preview](images/toolkit-cli-run-preview.svg)
-
-## Visual assets
-
-The toolkit wiki visuals are generated from the live project state so they can be refreshed when the catalog or CLI output changes:
-
-```powershell
-node scripts\generate_wiki_visuals.mjs
-```
 
 ## Project boundaries
 

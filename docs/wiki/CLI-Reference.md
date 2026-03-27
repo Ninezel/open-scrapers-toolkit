@@ -2,8 +2,6 @@
 
 This page documents the command-line interface exposed by `src/cli.ts` and `dist/cli.js`. The CLI is the stable operational layer of the toolkit. It is how contributors test scrapers, how automation jobs save JSON outputs, and how the desktop companion app discovers the scraper catalog.
 
-![CLI run preview](images/toolkit-cli-run-preview.svg)
-
 ## Command overview
 
 The CLI currently exposes three top-level commands:
