@@ -6,6 +6,7 @@ This repository is designed for long-term growth. The first version focuses on s
 
 Desktop companion:
 
+- Repository: `https://github.com/Ninezel/open-scrapers-desk`
 - `open-scrapers-desk` provides a PyQt desktop UI for running this toolkit and reading the saved JSON outputs.
 
 ## Why this project exists
