@@ -4,9 +4,10 @@ This page documents the command-line interface exposed by `src/cli.ts` and `dist
 
 ## Command overview
 
-The CLI currently exposes three top-level commands:
+The CLI currently exposes four top-level commands:
 
 - `list`
+- `describe`
 - `run`
 - `run-all`
 
@@ -36,6 +37,43 @@ npx tsx src/cli.ts list --format json
 ```
 
 This prints machine-readable metadata for every scraper, including parameter definitions. The desktop app uses this mode to populate its catalog view.
+
+### Category and search filters
+
+```powershell
+npx tsx src/cli.ts list --category weather --search forecast
+```
+
+Supported filters:
+
+- `-c, --category <category>`
+- `-s, --search <text>`
+
+## `describe`
+
+Use `describe` to inspect one scraper in detail without opening the source file.
+
+### Basic syntax
+
+```powershell
+npx tsx src/cli.ts describe <scraper-id>
+```
+
+### Supported options
+
+- `--format <pretty|json>`
+
+### Example: human-readable details
+
+```powershell
+npx tsx src/cli.ts describe open-meteo-city-forecast
+```
+
+### Example: JSON details
+
+```powershell
+npx tsx src/cli.ts describe nws-active-alerts --format json
+```
 
 ## `run`
 
@@ -156,7 +194,7 @@ Default for `run`. Prints a human-friendly preview and summary to the terminal.
 
 ### `json`
 
-Available on `run` and `list`. Prints the full JSON payload to stdout.
+Available on `run`, `list`, and `describe`. Prints machine-readable JSON to stdout.
 
 ## Common examples by use case
 

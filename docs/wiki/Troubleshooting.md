@@ -28,6 +28,7 @@ Possible causes:
 - the specific upstream source is temporarily unavailable
 - the source response format changed
 - your parameter values are invalid or too restrictive
+- the upstream request hit the configured timeout
 
 What to do:
 
@@ -35,6 +36,8 @@ What to do:
 2. Run the scraper with `--format json` to inspect raw output.
 3. Compare the source homepage or API docs to the current behavior.
 4. Open an issue if the upstream source appears to have changed.
+
+If the error mentions a timeout, increase `SCRAPERS_HTTP_TIMEOUT_MS` in your `.env` file and retry.
 
 ## Unknown scraper ID
 
@@ -53,6 +56,17 @@ Use a positive integer:
 ```powershell
 npx tsx src/cli.ts run bbc-world-news --limit 5
 ```
+
+## Invalid category
+
+The toolkit only supports these categories:
+
+- `news`
+- `weather`
+- `reports`
+- `academic`
+
+If you pass another value to `list --category` or `run-all --category`, the CLI will reject it.
 
 ## Output file was not created
 

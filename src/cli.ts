@@ -5,6 +5,12 @@ import { join } from "node:path";
 import { Command } from "commander";
 
 import {
+  buildCatalogEntries,
+  filterCatalogEntries,
+  formatScraperDetails,
+  normalizeCategoryFilter,
+} from "./core/catalog.js";
+import {
   defaultOutputPath,
   printResultSummary,
   saveResult,
@@ -96,8 +102,9 @@ async function runAllScrapers(options: {
   outDir?: string;
   param?: string[];
 }): Promise<void> {
+  const category = normalizeCategoryFilter(options.category);
   const selected = getAllScrapers().filter(
-    (scraper) => !options.category || scraper.category === options.category,
+    (scraper) => !category || scraper.category === category,
   );
 
   if (selected.length === 0) {
@@ -157,6 +164,17 @@ async function runAllScrapers(options: {
   console.table(summary);
 }
 
+function getCatalogRows(options: {
+  category?: string;
+  search?: string;
+}) {
+  const entries = buildCatalogEntries(getAllScrapers());
+  return filterCatalogEntries(entries, {
+    category: options.category,
+    search: options.search,
+  });
+}
+
 const program = new Command();
 
 program
@@ -169,15 +187,10 @@ program
   .command("list")
   .description("List all available starter scrapers.")
   .option("--format <table|json>", "List output format.", "table")
+  .option("-c, --category <category>", "Optional category filter.")
+  .option("-s, --search <text>", "Optional free-text search filter.")
   .action((options) => {
-    const rows = getAllScrapers().map((scraper) => ({
-      id: scraper.id,
-      category: scraper.category,
-      name: scraper.name,
-      description: scraper.description,
-      homepage: scraper.homepage,
-      params: scraper.params ?? [],
-    }));
+    const rows = getCatalogRows(options);
 
     if (options.format === "json") {
       console.log(JSON.stringify(rows, null, 2));
@@ -192,6 +205,30 @@ program
         description,
       })),
     );
+  });
+
+program
+  .command("describe")
+  .argument("<scraper-id>", "Scraper identifier to inspect.")
+  .description("Print the full metadata for one scraper.")
+  .option("--format <pretty|json>", "Describe output format.", "pretty")
+  .action((scraperId, options) => {
+    const scraper = getScraperById(scraperId);
+
+    if (!scraper) {
+      throw new Error(
+        `Unknown scraper "${scraperId}". Run "npm run list" to inspect the catalog.`,
+      );
+    }
+
+    const entry = buildCatalogEntries([scraper])[0];
+
+    if (options.format === "json") {
+      console.log(JSON.stringify(entry, null, 2));
+      return;
+    }
+
+    console.log(formatScraperDetails(entry));
   });
 
 program

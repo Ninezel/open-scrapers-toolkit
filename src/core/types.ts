@@ -45,6 +45,7 @@ export interface ScraperDefinition {
   category: ScraperCategory;
   description: string;
   homepage: string;
+  sourceName?: string;
   defaults?: Record<string, string>;
   params?: ScraperParameter[];
   run: (context: ScraperContext) => Promise<ScrapeResult>;

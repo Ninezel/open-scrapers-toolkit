@@ -35,6 +35,7 @@ const scraper: ScraperDefinition = {
   category: "weather",
   description: "Forecast snapshot from the Open-Meteo public API.",
   homepage: "https://open-meteo.com/en/docs",
+  sourceName: "Open-Meteo",
   defaults: {
     latitude: defaultLatitude,
     longitude: defaultLongitude,

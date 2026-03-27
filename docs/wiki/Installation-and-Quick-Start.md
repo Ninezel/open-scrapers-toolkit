@@ -23,6 +23,7 @@ List the available scrapers:
 
 ```powershell
 npm run list
+npx tsx src/cli.ts list --category reports --search world-bank
 ```
 
 Run a single scraper:
@@ -35,6 +36,12 @@ Save that output to a file:
 
 ```powershell
 npx tsx src/cli.ts run bbc-world-news --limit 5 --output output/bbc-world-news.json
+```
+
+Inspect a scraper's defaults and parameters:
+
+```powershell
+npx tsx src/cli.ts describe open-meteo-city-forecast
 ```
 
 Run all scrapers in one category:
@@ -155,6 +162,7 @@ Supported variables include:
 - `SCRAPERS_USER_AGENT`
 - `SCRAPERS_CONTACT_EMAIL`
 - `SCRAPERS_OUTPUT_DIR`
+- `SCRAPERS_HTTP_TIMEOUT_MS`
 - `DEFAULT_WEATHER_LATITUDE`
 - `DEFAULT_WEATHER_LONGITUDE`
 - `DEFAULT_WEATHER_LABEL`
@@ -165,6 +173,8 @@ Some public data providers expect a clear and identifiable user agent. The toolk
 
 Using a real contact email is a good practice for polite API use.
 
+`SCRAPERS_HTTP_TIMEOUT_MS` controls the default timeout used for upstream requests. The toolkit falls back to `30000` milliseconds when the variable is missing or invalid.
+
 ## Suggested first-day workflow
 
 1. Run `npm run list` and inspect the categories.
@@ -173,6 +183,15 @@ Using a real contact email is a good practice for polite API use.
 4. Open the JSON and study the normalized record format.
 5. Try a parameterized scraper such as weather, USGS, or World Bank.
 6. Move on to [CLI Reference](CLI-Reference.md) and [Scraper Catalog](Scraper-Catalog.md) once the basics feel clear.
+
+## Automated checks
+
+Run these before opening a pull request or after making local changes:
+
+```powershell
+npm run check
+npm test
+```
 
 ## Using the toolkit with Open Scrapers Desk
 

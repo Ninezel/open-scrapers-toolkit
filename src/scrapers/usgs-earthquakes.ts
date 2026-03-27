@@ -38,6 +38,7 @@ const scraper: ScraperDefinition = {
   category: "reports",
   description: "Recent earthquake events from the USGS GeoJSON feed.",
   homepage: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php",
+  sourceName: "USGS Earthquake Hazards Program",
   defaults: {
     minimumMagnitude: "0",
     place: "",

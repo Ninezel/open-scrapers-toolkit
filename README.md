@@ -49,6 +49,8 @@ Current starter modules:
 ```bash
 npm install
 npm run list
+npx tsx src/cli.ts list --category weather --search forecast
+npx tsx src/cli.ts describe open-meteo-city-forecast
 npx tsx src/cli.ts run bbc-world-news --limit 5
 npx tsx src/cli.ts run open-meteo-city-forecast --limit 6 --param latitude=51.5072 --param longitude=-0.1276 --param label=London
 npx tsx src/cli.ts run-all --out-dir output
@@ -73,6 +75,19 @@ Machine-readable catalog output:
 
 ```bash
 npx tsx src/cli.ts list --format json
+```
+
+Filter the catalog by category or text:
+
+```bash
+npx tsx src/cli.ts list --category reports --search world-bank
+```
+
+Inspect one scraper in detail:
+
+```bash
+npx tsx src/cli.ts describe open-meteo-city-forecast
+npx tsx src/cli.ts describe nws-active-alerts --format json
 ```
 
 Run one scraper:
@@ -138,9 +153,26 @@ Copy `.env.example` to `.env` if you want to customize defaults:
 - `SCRAPERS_USER_AGENT`
 - `SCRAPERS_CONTACT_EMAIL`
 - `SCRAPERS_OUTPUT_DIR`
+- `SCRAPERS_HTTP_TIMEOUT_MS`
 - `DEFAULT_WEATHER_LATITUDE`
 - `DEFAULT_WEATHER_LONGITUDE`
 - `DEFAULT_WEATHER_LABEL`
+
+`SCRAPERS_HTTP_TIMEOUT_MS` controls the default HTTP request timeout in milliseconds. The toolkit falls back to `30000` when the value is missing or invalid.
+
+## Validation and tests
+
+Type-check source and tests:
+
+```bash
+npm run check
+```
+
+Run the automated test suite:
+
+```bash
+npm test
+```
 
 ## Project layout
 
@@ -180,6 +212,10 @@ This repo is intentionally open, but not careless. Contributors should:
 - [Adding a scraper](docs/adding-a-scraper.md)
 - [Compliance and ethics](docs/compliance.md)
 - [Roadmap](docs/roadmap.md)
+
+## Continuous integration
+
+The repository includes a GitHub Actions workflow that runs type checks, tests, and a production build on pushes and pull requests.
 
 ## Open-source standards
 

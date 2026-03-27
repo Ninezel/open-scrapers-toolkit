@@ -72,6 +72,27 @@ npx tsx src/cli.ts list --format json
 
 That JSON catalog is what the desktop app consumes when it loads the available scraper list.
 
+### Filter the catalog
+
+```powershell
+npx tsx src/cli.ts list --category reports --search world-bank
+```
+
+### Inspect one scraper in detail
+
+```powershell
+npx tsx src/cli.ts describe open-meteo-city-forecast
+```
+
+## Recent platform improvements
+
+The current toolkit iteration also adds:
+
+- richer catalog discovery through category and search filters
+- a `describe` command for scraper-level metadata inspection
+- configurable request timeouts with clearer HTTP error messages
+- automated tests and GitHub Actions CI
+
 ## Project boundaries
 
 This repository is open source, but it is not a dumping ground for any possible scraper.

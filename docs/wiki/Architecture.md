@@ -8,6 +8,7 @@ Open Scrapers Toolkit is intentionally small, but it still has a defined interna
 src/
 |- cli.ts
 |- core/
+|  |- catalog.ts
 |  |- factories.ts
 |  |- http.ts
 |  |- output.ts
@@ -18,6 +19,8 @@ src/
 |- scrapers/
 |  |- index.ts
 |  |- *.ts
+test/
+|- *.test.ts
 ```
 
 ## Main responsibilities
@@ -43,6 +46,19 @@ Defines the shared contracts:
 - `ScrapedRecord`
 - `ScraperParameter`
 
+### `src/core/catalog.ts`
+
+Provides shared catalog behavior for the CLI, including:
+
+- category validation
+- catalog filtering
+- structured metadata output
+- human-readable `describe` formatting
+
+### `src/core/http.ts`
+
+Contains shared fetch behavior, including polite headers and configurable timeout handling for upstream requests.
+
 ### `src/core/factories.ts`
 
 Contains reusable scraper builders for:
@@ -61,11 +77,20 @@ Provides sorted access to the scraper catalog and resolves scrapers by ID.
 
 Contains one file per scraper module plus the central `index.ts` export list.
 
+### `test/`
+
+Contains automated tests for:
+
+- catalog filtering
+- CLI discovery commands
+- timeout configuration
+- utility helper behavior
+
 ## Execution flow
 
 ### Single scraper
 
-1. The CLI resolves the scraper by ID.
+1. The CLI resolves one scraper or filters a set of catalog entries.
 2. The CLI builds a `ScraperContext`.
 3. The scraper fetches the upstream source.
 4. The scraper normalizes records into the shared shape.
@@ -120,6 +145,14 @@ TypeScript helps this repository stay maintainable as the catalog grows:
 - refactors are safer
 - contributors get faster feedback
 - future tests and packaging work are easier to add
+
+## Quality gates
+
+The repository now has stronger maintenance guardrails:
+
+- `npm run check` verifies both source and test TypeScript
+- `npm test` exercises the CLI and shared helpers
+- GitHub Actions CI runs checks, tests, and builds on push and pull request
 
 ## Related pages
 

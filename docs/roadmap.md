@@ -10,8 +10,8 @@ This repository is intended to become a broad open-source scraper collection rat
 - additional academic indexes
 - CSV and NDJSON exporters
 - Docker packaging
-- scheduled jobs and GitHub Actions examples
-- lightweight parser tests
+- scheduled jobs and extended workflow automation
+- broader live-source regression coverage
 - source health checks
 
 ## Suggested next scrapers

@@ -18,9 +18,16 @@ npm install
 
 ```bash
 npm run list
+npx tsx src/cli.ts list --category weather --search forecast
 ```
 
 This prints every scraper ID, category, and description.
+
+Inspect one scraper in detail:
+
+```bash
+npx tsx src/cli.ts describe open-meteo-city-forecast
+```
 
 ## Run a single scraper
 
@@ -108,3 +115,10 @@ npm run start -- list
 3. Save outputs to `output/`.
 4. Review the record structure.
 5. Duplicate an existing scraper when adding a new source.
+
+## Automated checks
+
+```bash
+npm run check
+npm test
+```

@@ -5,17 +5,19 @@ The repository is intentionally small so contributors can understand it fast.
 ## Core pieces
 
 - `src/cli.ts`: command-line entry point
+- `src/core/catalog.ts`: shared catalog filtering and metadata formatting
 - `src/core/types.ts`: shared TypeScript interfaces
-- `src/core/http.ts`: polite HTTP helpers
+- `src/core/http.ts`: polite HTTP helpers and timeout handling
 - `src/core/rss.ts`: RSS and Atom parsing
 - `src/core/factories.ts`: reusable scraper factories for common source patterns
 - `src/core/output.ts`: JSON saving and preview output
 - `src/core/registry.ts`: scraper discovery
 - `src/scrapers/`: one file per scraper module
+- `test/`: automated tests for core helpers and CLI behavior
 
 ## Data flow
 
-1. The CLI selects a scraper by ID.
+1. The CLI selects or filters scrapers from the catalog.
 2. The CLI builds a `ScraperContext` with:
    - `limit`
    - merged default parameters
@@ -62,3 +64,11 @@ More complex sources such as Open-Meteo, NWS, and USGS use dedicated modules bec
 - easier onboarding for contributors
 - clearer contracts for normalized output
 - straightforward path to tests, packaging, and deployment automation
+
+## Quality and automation
+
+The repository now includes:
+
+- automated CLI and helper tests under `test/`
+- a test-specific TypeScript config for strict checking
+- GitHub Actions CI for type checks, tests, and production builds

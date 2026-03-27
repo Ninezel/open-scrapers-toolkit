@@ -34,6 +34,7 @@ const scraper: ScraperDefinition = {
   category: "weather",
   description: "Active US weather alerts from the National Weather Service API.",
   homepage: "https://www.weather.gov/documentation/services-web-api",
+  sourceName: "National Weather Service",
   defaults: {
     area: "",
     event: "",

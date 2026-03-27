@@ -38,6 +38,7 @@ A strong contribution usually has these traits:
 Before requesting review, make sure:
 
 - `npm run check` passes
+- `npm test` passes
 - the scraper can run successfully against the live source
 - docs are updated
 - parameter defaults are reasonable
@@ -48,6 +49,7 @@ Before requesting review, make sure:
 
 ```powershell
 npm run check
+npm test
 npm run build
 npx tsx src/cli.ts list --format json
 ```
@@ -83,17 +85,20 @@ Toolkit releases should be:
 At minimum, a release should confirm:
 
 - the catalog loads
+- discovery commands such as `describe` and filtered `list` behave correctly
 - core commands run
+- tests pass
 - packaged docs match the actual behavior
 
 ## Suggested release checklist
 
 1. Run `npm run check`.
-2. Run `npm run build`.
-3. Run representative scrapers across each category.
-4. Review docs for outdated commands or changed scraper IDs.
-5. Update release notes.
-6. Push tags and publish the GitHub release.
+2. Run `npm test`.
+3. Run `npm run build`.
+4. Run representative scrapers across each category.
+5. Review docs for outdated commands or changed scraper IDs.
+6. Update release notes or `CHANGELOG.md`.
+7. Push tags and publish the GitHub release.
 
 ## Compatibility with Open Scrapers Desk
 
