@@ -1,9 +1,5 @@
 # FAQ
 
-## Is it scrapers or scrappers?
-
-`Scrapers` is correct.
-
 ## Do I need OpenAI to use this repo?
 
 No. AI enrichment is optional and only affects the file-based webpage workflow.
