@@ -11,14 +11,16 @@
   },
   "scripts": {
     "dev": "tsx src/cli.ts",
-    "test": "node --import tsx --test test/catalog.test.ts test/cli.test.ts test/http.test.ts test/utils.test.ts",
+    "test": "node --import tsx --test test/catalog.test.ts test/cli.test.ts test/http.test.ts test/output.test.ts test/url-links.test.ts test/utils.test.ts",
+    "test:live": "node --import tsx --test test/live-sources.test.ts",
     "build": "tsc -p tsconfig.json",
     "check:src": "tsc -p tsconfig.json --noEmit",
     "check:test": "tsc -p tsconfig.test.json",
     "check": "npm run check:src && npm run check:test",
     "start": "node dist/cli.js",
     "list": "tsx src/cli.ts list",
-    "run:all": "tsx src/cli.ts run-all --out-dir output"
+    "run:all": "tsx src/cli.ts run-all --out-dir output",
+    "health": "tsx src/cli.ts health --format table"
   },
   "keywords": [
     "scraping",
@@ -31,6 +33,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "cheerio": "^1.1.2",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
     "fast-xml-parser": "^5.5.9"

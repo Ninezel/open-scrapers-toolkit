@@ -22,6 +22,23 @@ export function cleanText(value: string | undefined | null): string | undefined 
     .trim();
 }
 
+export function truncateText(
+  value: string | undefined | null,
+  maxLength: number,
+): string | undefined {
+  const cleaned = cleanText(value);
+
+  if (!cleaned) {
+    return undefined;
+  }
+
+  if (cleaned.length <= maxLength) {
+    return cleaned;
+  }
+
+  return `${cleaned.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
+}
+
 export function toArray<T>(value: T | T[] | undefined | null): T[] {
   if (value === undefined || value === null) {
     return [];
@@ -66,6 +83,40 @@ export function parseKeyValuePairs(entries: string[]): Record<string, string> {
   }, {});
 }
 
+export function parseBoolean(
+  value: string | undefined | null,
+  fallback = false,
+): boolean {
+  if (!value) {
+    return fallback;
+  }
+
+  const normalized = value.trim().toLowerCase();
+
+  if (["1", "true", "yes", "y", "on"].includes(normalized)) {
+    return true;
+  }
+
+  if (["0", "false", "no", "n", "off"].includes(normalized)) {
+    return false;
+  }
+
+  return fallback;
+}
+
+export function parseOptionalPositiveInteger(
+  value: string | undefined | null,
+  fallback: number,
+): number {
+  const parsed = Number.parseInt(value ?? "", 10);
+
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return fallback;
+  }
+
+  return parsed;
+}
+
 export function slugify(value: string): string {
   return value
     .toLowerCase()
@@ -103,4 +154,27 @@ export function splitCommaList(value: string | undefined | null): string[] {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+export function uniqueStrings(
+  values: Array<string | undefined | null>,
+): string[] {
+  return Array.from(
+    new Set(
+      values
+        .map((value) => value?.trim())
+        .filter((value): value is string => Boolean(value)),
+    ),
+  );
+}
+
+export function parseLineList(text: string): string[] {
+  return Array.from(
+    new Set(
+      text
+        .split(/\r?\n/u)
+        .map((line) => line.trim())
+        .filter((line) => line && !line.startsWith("#")),
+    ),
+  );
 }

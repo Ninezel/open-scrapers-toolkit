@@ -1,6 +1,6 @@
 # Adding a Scraper
 
-This project is meant to grow, so adding scrapers should feel routine.
+This project is meant to grow, so adding scrapers should feel routine rather than heroic.
 
 ## Before you code
 
@@ -18,8 +18,10 @@ Use a factory in `src/core/factories.ts` when the source matches an existing pat
 Good factory candidates:
 
 - RSS or Atom feeds
+- arXiv-style feed search
 - search-style research APIs
 - indicator-style JSON APIs
+- document search APIs
 
 ## Steps
 
@@ -27,41 +29,18 @@ Good factory candidates:
 2. Export a `ScraperDefinition`.
 3. Add it to `src/scrapers/index.ts`.
 4. Document defaults and parameters.
-5. Update [scraper-catalog.md](scraper-catalog.md).
-6. Run `npm run check`.
-7. Run the scraper against the live endpoint.
+5. Update `docs/scraper-catalog.md`.
+6. Add or update tests.
+7. Run `npm run check`, `npm test`, and a live run of the scraper.
 
-## Example structure
+## Bulk-link and AI guidance
 
-```ts
-const scraper: ScraperDefinition = {
-  id: "source-topic",
-  name: "Source Topic",
-  category: "reports",
-  description: "Short explanation",
-  homepage: "https://example.com",
-  defaults: {
-    query: "example"
-  },
-  params: [
-    {
-      key: "query",
-      description: "Search term override"
-    }
-  ],
-  async run(context) {
-    return {
-      scraperId: "...",
-      scraperName: "...",
-      category: "reports",
-      source: "Example",
-      fetchedAt: context.now.toISOString(),
-      records: [],
-      meta: {}
-    };
-  }
-};
-```
+If you are adding an HTML page scraper:
+
+- prefer a public feed or API before raw page extraction
+- use `src/core/html.ts` when you need basic readable-text extraction
+- treat AI enrichment as optional metadata, not ground truth
+- make the scraper useful even when `OPENAI_API_KEY` is not configured
 
 ## Good defaults
 

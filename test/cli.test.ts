@@ -15,7 +15,7 @@ function runCli(args: string[]): string {
 }
 
 test("list supports category and search filters in json mode", () => {
-  const output = runCli(["list", "--category", "weather", "--search", "forecast", "--format", "json"]);
+  const output = runCli(["list", "--category", "weather", "--search", "city forecast", "--format", "json"]);
   const payload = JSON.parse(output) as Array<{ id: string; category: string }>;
 
   assert.deepEqual(payload, [

@@ -1,138 +1,168 @@
 # Open Scrapers Toolkit
 
-Open Scrapers Toolkit is an open-source TypeScript project for collecting structured data from public news feeds, weather services, reports APIs, and academic research indexes. It ships with a reusable scraper framework, a CLI, and a starter catalog of 15 scrapers that people can run, remix, and extend.
-
-This repository is designed for long-term growth. The first version focuses on sources that are either public APIs or public RSS feeds so contributors can learn the structure quickly and add new scrapers safely.
+Open Scrapers Toolkit is an open-source TypeScript project for collecting structured data from public news feeds, weather services, report APIs, research indexes, and user-supplied website lists. It ships with a reusable scraper framework, a CLI, export tools, health checks, Docker support, and a starter catalog of 28 scrapers that people can run, remix, and extend.
 
 Desktop companion:
 
 - Repository: `https://github.com/Ninezel/open-scrapers-desk`
-- `open-scrapers-desk` provides a PyQt desktop UI for running this toolkit and reading the saved JSON outputs.
+- `open-scrapers-desk` provides a PyQt desktop UI for running this toolkit and reading the saved outputs.
 
 ## Why this project exists
 
 - Give people a clean starter repo for scraping and feed collection.
 - Prefer transparent, documented sources over fragile browser automation where possible.
 - Make the project easy to fork, edit, and reuse for personal research, dashboards, automation, and learning.
-- Establish repo rules early so the project can scale beyond the initial 10+ scrapers.
+- Grow beyond a handful of scrapers without turning the repo into a tangle of one-off scripts.
 
-## Starter scraper catalog
+## Current feature set
 
-Current starter modules:
+- 28 starter scrapers across `news`, `weather`, `reports`, and `academic`
+- rich catalog discovery with `list`, `describe`, category filters, and search
+- `run`, `run-all`, and `scrape-links` CLI flows
+- CSV and NDJSON exports in addition to JSON
+- `health` command for source-health reporting
+- optional OpenAI enrichment for file-based website link scraping
+- Docker packaging and a scheduled GitHub Actions health workflow
+- strict TypeScript checks, automated tests, and optional live-source smoke tests
+
+## Starter catalog
+
+News:
 
 - `bbc-world-news`
 - `bbc-technology-news`
+- `bbc-business-news`
+- `bbc-science-environment-news`
 - `nasa-breaking-news`
 - `nasa-image-of-the-day`
+
+Weather:
+
 - `nws-active-alerts`
 - `open-meteo-city-forecast`
+- `open-meteo-air-quality`
+
+Reports:
+
 - `usgs-earthquakes`
 - `world-bank-population`
 - `world-bank-gdp`
 - `world-bank-climate-documents`
 - `world-bank-education-documents`
+- `world-bank-health-documents`
+- `world-bank-water-documents`
+- `website-links-ai-digest`
+
+Academic:
+
 - `crossref-ai-papers`
 - `crossref-climate-papers`
+- `crossref-cybersecurity-papers`
+- `crossref-renewable-energy-papers`
 - `europepmc-public-health`
 - `europepmc-oncology`
+- `europepmc-infectious-disease`
+- `europepmc-mental-health`
+- `arxiv-machine-learning`
+- `arxiv-climate-science`
+- `arxiv-public-health`
 
 ## Stack
 
 - Node.js 20+
 - TypeScript
-- Native `fetch`
+- native `fetch`
 - `commander` for the CLI
-- `fast-xml-parser` for RSS and XML feeds
+- `fast-xml-parser` for RSS and Atom feeds
+- `cheerio` for webpage extraction in the bulk-link scraper
 
 ## Quick start
 
 ```bash
 npm install
-npm run list
 npx tsx src/cli.ts list --category weather --search forecast
-npx tsx src/cli.ts describe open-meteo-city-forecast
-npx tsx src/cli.ts run bbc-world-news --limit 5
-npx tsx src/cli.ts run open-meteo-city-forecast --limit 6 --param latitude=51.5072 --param longitude=-0.1276 --param label=London
-npx tsx src/cli.ts run-all --out-dir output
+npx tsx src/cli.ts describe website-links-ai-digest
+npx tsx src/cli.ts run bbc-business-news --limit 5
+npx tsx src/cli.ts run-all --category academic --limit 3 --out-dir output/academic
 ```
 
-Build the compiled CLI:
+## Bulk website list scraping
+
+Put one URL per line in a text file:
+
+```text
+https://www.bbc.com/news/world
+https://www.nasa.gov/news-release/
+https://open-meteo.com/en/docs
+```
+
+Run it with:
 
 ```bash
-npm run build
-npm run start -- list
+npx tsx src/cli.ts scrape-links examples/url-lists/demo-links.txt --limit 3 --output output/links-digest.json
+```
+
+Use optional AI enrichment only when `OPENAI_API_KEY` and `OPENAI_MODEL` are configured:
+
+```bash
+npx tsx src/cli.ts scrape-links examples/url-lists/demo-links.txt --use-ai auto --output output/links-digest.json --save-format all
 ```
 
 ## CLI commands
 
-List all scrapers:
+List the catalog:
 
 ```bash
 npm run list
-```
-
-Machine-readable catalog output:
-
-```bash
 npx tsx src/cli.ts list --format json
-```
-
-Filter the catalog by category or text:
-
-```bash
 npx tsx src/cli.ts list --category reports --search world-bank
 ```
 
-Inspect one scraper in detail:
+Inspect one scraper:
 
 ```bash
-npx tsx src/cli.ts describe open-meteo-city-forecast
-npx tsx src/cli.ts describe nws-active-alerts --format json
+npx tsx src/cli.ts describe open-meteo-air-quality
+npx tsx src/cli.ts describe website-links-ai-digest --format json
 ```
 
 Run one scraper:
 
 ```bash
 npx tsx src/cli.ts run nasa-breaking-news --limit 10 --output output/nasa-breaking-news.json
+npx tsx src/cli.ts run open-meteo-air-quality --limit 6 --output output/air-quality.json --save-format all
 ```
 
-Run one scraper and print raw JSON:
+Run batches:
 
 ```bash
-npx tsx src/cli.ts run crossref-ai-papers --limit 3 --format json
+npx tsx src/cli.ts run-all --category weather --limit 5 --out-dir output/weather
+npx tsx src/cli.ts run-all --search world-bank --out-dir output/reports --save-format csv
 ```
 
-Run every scraper in a single category:
+Check source health:
 
 ```bash
-npx tsx src/cli.ts run-all --category academic --limit 5 --out-dir output/academic
+npx tsx src/cli.ts health --format table
+npx tsx src/cli.ts health --category weather --format json --output output/source-health-report.json
 ```
 
-Pass extra parameters to a scraper:
+Export an existing JSON result:
 
 ```bash
-npx tsx src/cli.ts run open-meteo-city-forecast --param latitude=40.7128 --param longitude=-74.0060 --param label=NewYork
-npx tsx src/cli.ts run usgs-earthquakes --param minimumMagnitude=4.5 --param place=Japan
-npx tsx src/cli.ts run world-bank-population --param country=GBR
-```
-
-If you prefer `npm run dev`, add one extra `--` before scraper flags:
-
-```bash
-npm run dev -- run bbc-world-news -- --limit 5 --output output/bbc-world-news.json
+npx tsx src/cli.ts export output/bbc-business-news.json --format all --output output/bbc-business-news.json
 ```
 
 ## Output format
 
-Each scraper writes a normalized JSON payload:
+Each scraper writes a normalized payload:
 
-- `scraperId`: internal scraper identifier
-- `scraperName`: human-readable scraper name
-- `category`: `news`, `weather`, `reports`, or `academic`
-- `source`: upstream source name
-- `fetchedAt`: ISO timestamp for this run
-- `records`: normalized items
-- `meta`: source-specific request or run metadata
+- `scraperId`
+- `scraperName`
+- `category`
+- `source`
+- `fetchedAt`
+- `records`
+- `meta`
 
 Each record may include:
 
@@ -154,55 +184,37 @@ Copy `.env.example` to `.env` if you want to customize defaults:
 - `SCRAPERS_CONTACT_EMAIL`
 - `SCRAPERS_OUTPUT_DIR`
 - `SCRAPERS_HTTP_TIMEOUT_MS`
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL`
+- `OPENAI_BASE_URL`
 - `DEFAULT_WEATHER_LATITUDE`
 - `DEFAULT_WEATHER_LONGITUDE`
 - `DEFAULT_WEATHER_LABEL`
 
-`SCRAPERS_HTTP_TIMEOUT_MS` controls the default HTTP request timeout in milliseconds. The toolkit falls back to `30000` when the value is missing or invalid.
+## Docker
 
-## Validation and tests
+Build and run the compiled CLI in Docker:
 
-Type-check source and tests:
+```bash
+docker build -t open-scrapers-toolkit .
+docker run --rm open-scrapers-toolkit list
+docker run --rm open-scrapers-toolkit health --format table
+```
+
+## Validation
 
 ```bash
 npm run check
+npm test
+npm run build
 ```
 
-Run the automated test suite:
+Optional live-source smoke tests:
 
 ```bash
-npm test
+set RUN_LIVE_TESTS=1
+npm run test:live
 ```
-
-## Project layout
-
-```text
-.
-|- docs/
-|- examples/
-|- src/
-|  |- core/
-|  |- scrapers/
-|- .github/
-|- CONTRIBUTING.md
-|- CODE_OF_CONDUCT.md
-|- GOVERNANCE.md
-|- LICENSE
-|- README.md
-|- SCRAPING_POLICY.md
-|- SECURITY.md
-```
-
-## Repository rules
-
-This repo is intentionally open, but not careless. Contributors should:
-
-- Prefer official APIs, public datasets, and RSS feeds before building brittle page scrapers.
-- Respect robots.txt, source terms, rate limits, and geographic or legal restrictions.
-- Never add scrapers that bypass paywalls, authentication, CAPTCHAs, or technical access controls.
-- Avoid collecting personal data unless the source explicitly allows it and the need is documented.
-- Add documentation and a sample run command whenever a new scraper is added.
-- Keep scraper outputs structured and predictable so others can build on them.
 
 ## Documentation
 
@@ -212,10 +224,7 @@ This repo is intentionally open, but not careless. Contributors should:
 - [Adding a scraper](docs/adding-a-scraper.md)
 - [Compliance and ethics](docs/compliance.md)
 - [Roadmap](docs/roadmap.md)
-
-## Continuous integration
-
-The repository includes a GitHub Actions workflow that runs type checks, tests, and a production build on pushes and pull requests.
+- [Release workflow](docs/release-workflow.md)
 
 ## Open-source standards
 
@@ -228,4 +237,5 @@ The repository includes a GitHub Actions workflow that runs type checks, tests, 
 ## Notes
 
 - Public source endpoints can change. If a scraper stops working, open an issue with the source, date, error, and any sample response.
-- This toolkit is for lawful and responsible use. It is not legal advice.
+- The bulk link scraper is meant for lawful access to public webpages, not bypassing controls or mass harvesting.
+- AI enrichment is optional and should be treated as a convenience layer, not a guaranteed ground truth.

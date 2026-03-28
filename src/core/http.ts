@@ -2,6 +2,13 @@ import type { ScraperContext } from "./types.js";
 
 export const DEFAULT_HTTP_TIMEOUT_MS = 30_000;
 
+export interface FetchTextResponse {
+  contentType: string;
+  finalUrl: string;
+  status: number;
+  text: string;
+}
+
 export function resolveHttpTimeoutMs(
   value = process.env.SCRAPERS_HTTP_TIMEOUT_MS,
 ): number {
@@ -80,9 +87,22 @@ export async function fetchText(
   url: string,
   init?: RequestInit,
 ): Promise<string> {
-  const response = await performRequest(context, url, init);
+  const response = await fetchTextResponse(context, url, init);
+  return response.text;
+}
 
-  return handleResponse(response, (currentResponse) => currentResponse.text());
+export async function fetchTextResponse(
+  context: ScraperContext,
+  url: string,
+  init?: RequestInit,
+): Promise<FetchTextResponse> {
+  const response = await performRequest(context, url, init);
+  return handleResponse(response, async (currentResponse) => ({
+    contentType: currentResponse.headers.get("content-type") ?? "",
+    finalUrl: currentResponse.url || url,
+    status: currentResponse.status,
+    text: await currentResponse.text(),
+  }));
 }
 
 export async function fetchJson<T>(

@@ -1,0 +1,35 @@
+name: Source Health Check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 5 * * *"
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build toolkit
+        run: npm run build
+
+      - name: Run source health checks
+        run: node dist/cli.js health --format json --output output/source-health-report.json
+
+      - name: Upload health report
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-health-report
+          path: output/source-health-report.json

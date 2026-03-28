@@ -134,6 +134,55 @@ export function createRssScraper(
   };
 }
 
+export function createArxivScraper(
+  config: BaseScraperConfig & {
+    query: string;
+    defaultTags?: string[];
+  },
+): ScraperDefinition {
+  return {
+    ...config,
+    async run(context) {
+      const params = mergeScraperParams(config.defaults, context.params);
+      const query = params.query ?? config.query;
+      const endpoint = new URL("https://export.arxiv.org/api/query");
+
+      endpoint.searchParams.set("search_query", `all:${query}`);
+      endpoint.searchParams.set("start", "0");
+      endpoint.searchParams.set("max_results", String(context.limit));
+      endpoint.searchParams.set("sortBy", "submittedDate");
+      endpoint.searchParams.set("sortOrder", "descending");
+
+      const xml = await fetchText(context, endpoint.toString(), {
+        headers: {
+          accept: "application/atom+xml, application/xml, text/xml",
+        },
+      });
+      const items = take(parseFeed(xml), context.limit);
+
+      const records = items.map<ScrapedRecord>((item) => ({
+        id: buildStableId(config.id, item.id, item.link, item.title),
+        source: config.sourceName,
+        title: item.title ?? "Untitled arXiv entry",
+        url: item.link,
+        summary: item.summary,
+        publishedAt: toIsoDate(item.publishedAt),
+        authors: item.authors.length > 0 ? item.authors : undefined,
+        tags: Array.from(new Set([...(config.defaultTags ?? []), ...item.categories])),
+        metadata: {
+          endpoint: endpoint.toString(),
+          query,
+        },
+      }));
+
+      return buildResult(config, context, records, {
+        endpoint: endpoint.toString(),
+        query,
+      });
+    },
+  };
+}
+
 export function createCrossrefScraper(
   config: BaseScraperConfig & {
     query: string;

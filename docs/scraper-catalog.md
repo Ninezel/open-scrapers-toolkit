@@ -1,122 +1,46 @@
 # Scraper Catalog
 
-This page describes the starter catalog included in the repository.
+This page summarizes the current starter catalog and the kinds of inputs each scraper accepts.
 
 ## News
 
-### `bbc-world-news`
-
-- Source: BBC News RSS
-- Purpose: collect current world headlines
-- Parameters: none
-
-### `bbc-technology-news`
-
-- Source: BBC News RSS
-- Purpose: collect technology headlines
-- Parameters: none
-
-### `nasa-breaking-news`
-
-- Source: NASA RSS
-- Purpose: collect official NASA announcements
-- Parameters: none
-
-### `nasa-image-of-the-day`
-
-- Source: NASA RSS
-- Purpose: collect daily image posts with summaries
-- Parameters: none
+- `bbc-world-news`: BBC world headlines, no extra parameters
+- `bbc-technology-news`: BBC technology headlines, no extra parameters
+- `bbc-business-news`: BBC business headlines, no extra parameters
+- `bbc-science-environment-news`: BBC science and environment headlines, no extra parameters
+- `nasa-breaking-news`: NASA announcements, no extra parameters
+- `nasa-image-of-the-day`: NASA image posts, no extra parameters
 
 ## Weather
 
-### `nws-active-alerts`
-
-- Source: National Weather Service API
-- Purpose: collect active US weather alerts
-- Parameters:
-  - `area`
-  - `event`
-  - `severity`
-
-### `open-meteo-city-forecast`
-
-- Source: Open-Meteo API
-- Purpose: collect hourly forecast records for a location
-- Parameters:
-  - `latitude`
-  - `longitude`
-  - `label`
-  - `timezone`
-  - `days`
+- `nws-active-alerts`: National Weather Service alerts, parameters `area`, `event`, `severity`
+- `open-meteo-city-forecast`: hourly forecast records, parameters `latitude`, `longitude`, `label`, `timezone`, `days`
+- `open-meteo-air-quality`: hourly air-quality and UV records, parameters `latitude`, `longitude`, `label`, `timezone`
 
 ## Reports
 
-### `usgs-earthquakes`
-
-- Source: USGS GeoJSON feed
-- Purpose: collect recent earthquake events
-- Parameters:
-  - `minimumMagnitude`
-  - `place`
-
-### `world-bank-population`
-
-- Source: World Bank indicator API
-- Purpose: fetch latest population values
-- Parameters:
-  - `country`
-
-### `world-bank-gdp`
-
-- Source: World Bank indicator API
-- Purpose: fetch latest GDP values
-- Parameters:
-  - `country`
-
-### `world-bank-climate-documents`
-
-- Source: World Bank document search API
-- Purpose: collect climate-related reports and publications
-- Parameters:
-  - `query`
-
-### `world-bank-education-documents`
-
-- Source: World Bank document search API
-- Purpose: collect education-related reports and publications
-- Parameters:
-  - `query`
+- `usgs-earthquakes`: earthquake events, parameters `minimumMagnitude`, `place`
+- `world-bank-population`: latest population indicator, parameter `country`
+- `world-bank-gdp`: latest GDP indicator, parameter `country`
+- `world-bank-climate-documents`: World Bank climate reports, parameter `query`
+- `world-bank-education-documents`: World Bank education reports, parameter `query`
+- `world-bank-health-documents`: World Bank health reports, parameter `query`
+- `world-bank-water-documents`: World Bank water reports, parameter `query`
+- `website-links-ai-digest`: user-supplied website link file, required parameter `file`, optional `useAi`, `model`, `maxChars`, `sourceLabel`
 
 ## Academic
 
-### `crossref-ai-papers`
-
-- Source: Crossref REST API
-- Purpose: discover recently indexed AI-focused papers
-- Parameters:
-  - `query`
-
-### `crossref-climate-papers`
-
-- Source: Crossref REST API
-- Purpose: discover recently indexed climate-focused papers
-- Parameters:
-  - `query`
-
-### `europepmc-public-health`
-
-- Source: Europe PMC REST API
-- Purpose: discover public health publications
-- Parameters:
-  - `query`
-
-### `europepmc-oncology`
-
-- Source: Europe PMC REST API
-- Purpose: discover oncology publications
-- Parameters:
-  - `query`
+- `crossref-ai-papers`: parameter `query`
+- `crossref-climate-papers`: parameter `query`
+- `crossref-cybersecurity-papers`: parameter `query`
+- `crossref-renewable-energy-papers`: parameter `query`
+- `europepmc-public-health`: parameter `query`
+- `europepmc-oncology`: parameter `query`
+- `europepmc-infectious-disease`: parameter `query`
+- `europepmc-mental-health`: parameter `query`
+- `arxiv-machine-learning`: parameter `query`
+- `arxiv-climate-science`: parameter `query`
+- `arxiv-public-health`: parameter `query`
 
 ## Naming pattern
 
@@ -126,6 +50,7 @@ Scraper IDs follow a simple convention:
 
 Examples:
 
-- `bbc-world-news`
-- `world-bank-climate-documents`
-- `open-meteo-city-forecast`
+- `bbc-business-news`
+- `world-bank-water-documents`
+- `open-meteo-air-quality`
+- `website-links-ai-digest`

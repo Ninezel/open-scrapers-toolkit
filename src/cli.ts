@@ -1,5 +1,5 @@
 import { config as loadEnv } from "dotenv";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { Command } from "commander";
@@ -10,16 +10,27 @@ import {
   formatScraperDetails,
   normalizeCategoryFilter,
 } from "./core/catalog.js";
+import { runHealthChecks } from "./core/health.js";
 import {
   defaultOutputPath,
+  normalizeExportFormat,
   printResultSummary,
-  saveResult,
+  saveResultFiles,
 } from "./core/output.js";
 import { getAllScrapers, getScraperById } from "./core/registry.js";
-import type { ScraperContext, ScraperDefinition } from "./core/types.js";
+import type { ScrapeResult, ScraperContext, ScraperDefinition } from "./core/types.js";
 import { parseKeyValuePairs } from "./core/utils.js";
 
 loadEnv();
+
+interface SharedRunOptions {
+  format?: string;
+  limit?: string;
+  outDir?: string;
+  output?: string;
+  param?: string[];
+  saveFormat?: string;
+}
 
 function collect(value: string, previous: string[]): string[] {
   previous.push(value);
@@ -70,15 +81,68 @@ function buildContext(
   };
 }
 
+function selectScrapers(options: {
+  category?: string;
+  search?: string;
+}): ScraperDefinition[] {
+  const selectedIds = new Set(
+    filterCatalogEntries(buildCatalogEntries(getAllScrapers()), options).map(
+      (entry) => entry.id,
+    ),
+  );
+
+  return getAllScrapers().filter((scraper) => selectedIds.has(scraper.id));
+}
+
+function printHealthSummary(result: ScrapeResult): void {
+  console.table(
+    result.records.map((record) => ({
+      scraperId: String(record.metadata?.scraperId ?? ""),
+      category: String(record.metadata?.category ?? ""),
+      status: String(record.metadata?.status ?? ""),
+      records: String(record.metadata?.records ?? ""),
+      durationMs: String(record.metadata?.durationMs ?? ""),
+      message: record.summary ?? "",
+    })),
+  );
+
+  if (result.meta) {
+    console.log(
+      `Health check completed: ${result.meta.ok ?? 0} ok, ${result.meta.failed ?? 0} failed, ${result.meta.skipped ?? 0} skipped.`,
+    );
+  }
+}
+
+async function saveIfRequested(
+  result: ScrapeResult,
+  options: SharedRunOptions,
+  fallbackOutputPath: string,
+): Promise<void> {
+  if (!options.output && options.saveFormat) {
+    throw new Error(
+      "Provide --output when using --save-format for single-result commands.",
+    );
+  }
+
+  if (!options.output) {
+    return;
+  }
+
+  const exportFormat = normalizeExportFormat(options.saveFormat);
+  const savedPaths = await saveResultFiles(
+    result,
+    options.output ?? fallbackOutputPath,
+    exportFormat,
+  );
+
+  for (const savedPath of savedPaths) {
+    console.log(`Saved ${result.scraperId} output to ${savedPath}`);
+  }
+}
+
 async function runSingleScraper(
   scraper: ScraperDefinition,
-  options: {
-    limit?: string;
-    outDir?: string;
-    output?: string;
-    format?: string;
-    param?: string[];
-  },
+  options: SharedRunOptions,
 ): Promise<void> {
   const context = buildContext(scraper, options);
   const result = await scraper.run(context);
@@ -90,10 +154,7 @@ async function runSingleScraper(
     printResultSummary(result);
   }
 
-  if (options.output) {
-    const savedPath = await saveResult(result, options.output);
-    console.log(`Saved ${scraper.id} output to ${savedPath}`);
-  }
+  await saveIfRequested(result, options, defaultOutputPath(context.outputDir, result));
 }
 
 async function runAllScrapers(options: {
@@ -101,11 +162,17 @@ async function runAllScrapers(options: {
   limit?: string;
   outDir?: string;
   param?: string[];
+  saveFormat?: string;
+  search?: string;
 }): Promise<void> {
-  const category = normalizeCategoryFilter(options.category);
-  const selected = getAllScrapers().filter(
-    (scraper) => !category || scraper.category === category,
-  );
+  if (options.category) {
+    normalizeCategoryFilter(options.category);
+  }
+
+  const selected = selectScrapers({
+    category: options.category,
+    search: options.search,
+  });
 
   if (selected.length === 0) {
     throw new Error("No scrapers matched the supplied filters.");
@@ -114,6 +181,7 @@ async function runAllScrapers(options: {
   const outputDir = options.outDir ?? process.env.SCRAPERS_OUTPUT_DIR ?? "output";
   await mkdir(outputDir, { recursive: true });
 
+  const exportFormat = normalizeExportFormat(options.saveFormat);
   const summary: Array<Record<string, string | number>> = [];
 
   for (const scraper of selected) {
@@ -121,45 +189,42 @@ async function runAllScrapers(options: {
       const context = buildContext(scraper, options);
       const result = await scraper.run(context);
       const target = defaultOutputPath(outputDir, result);
-      const savedPath = await saveResult(result, target);
+      const savedPaths = await saveResultFiles(result, target, exportFormat);
 
       summary.push({
         scraperId: scraper.id,
         category: scraper.category,
         records: result.records.length,
+        saved: savedPaths.length,
         status: "ok",
-        file: savedPath,
       });
 
-      console.log(`Finished ${scraper.id} -> ${savedPath}`);
+      console.log(`Finished ${scraper.id} -> ${savedPaths.join(", ")}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       summary.push({
         scraperId: scraper.id,
         category: scraper.category,
         records: 0,
+        saved: 0,
         status: `error: ${message}`,
-        file: "",
       });
       console.error(`Failed ${scraper.id}: ${message}`);
     }
   }
 
-  const summaryPath = join(outputDir, "run-summary.json");
-  await saveResult(
-    {
-      scraperId: "run-summary",
-      scraperName: "Run Summary",
-      category: "reports",
-      source: "open-scrapers-toolkit",
-      fetchedAt: new Date().toISOString(),
-      records: [],
-      meta: {
-        results: summary,
-      },
+  const summaryResult: ScrapeResult = {
+    scraperId: "run-summary",
+    scraperName: "Run Summary",
+    category: "reports",
+    source: "open-scrapers-toolkit",
+    fetchedAt: new Date().toISOString(),
+    records: [],
+    meta: {
+      results: summary,
     },
-    summaryPath,
-  );
+  };
+  await saveResultFiles(summaryResult, join(outputDir, "run-summary.json"), "json");
 
   console.table(summary);
 }
@@ -175,12 +240,74 @@ function getCatalogRows(options: {
   });
 }
 
+async function runLinksFile(
+  filePath: string,
+  options: SharedRunOptions & {
+    maxChars?: string;
+    model?: string;
+    sourceLabel?: string;
+    useAi?: string;
+  },
+): Promise<void> {
+  const scraper = getScraperById("website-links-ai-digest");
+
+  if (!scraper) {
+    throw new Error("The website-links-ai-digest scraper is not registered.");
+  }
+
+  const params = [...(options.param ?? []), `file=${filePath}`];
+
+  if (options.useAi) {
+    params.push(`useAi=${options.useAi}`);
+  }
+
+  if (options.model) {
+    params.push(`model=${options.model}`);
+  }
+
+  if (options.maxChars) {
+    params.push(`maxChars=${options.maxChars}`);
+  }
+
+  if (options.sourceLabel) {
+    params.push(`sourceLabel=${options.sourceLabel}`);
+  }
+
+  await runSingleScraper(scraper, {
+    ...options,
+    param: params,
+  });
+}
+
+async function exportSavedResult(options: {
+  format?: string;
+  input: string;
+  output?: string;
+}): Promise<void> {
+  const payload = JSON.parse(await readFile(options.input, "utf8")) as ScrapeResult;
+  const output =
+    options.output ??
+    join(
+      process.env.SCRAPERS_OUTPUT_DIR ?? "output",
+      `${payload.scraperId || "exported-result"}.json`,
+    );
+  const savedPaths = await saveResultFiles(
+    payload,
+    output,
+    normalizeExportFormat(options.format),
+  );
+
+  for (const savedPath of savedPaths) {
+    console.log(`Exported ${payload.scraperId} to ${savedPath}`);
+  }
+}
+
 const program = new Command();
 
 program
   .name("open-scrapers")
   .description(
-    "Starter toolkit of open-source scrapers for news, weather, reports, and academic research.",
+    "Open-source scrapers for news, weather, reports, research, and user-supplied website link collections.",
   );
 
 program
@@ -198,10 +325,11 @@ program
     }
 
     console.table(
-      rows.map(({ id, category, name, description }) => ({
+      rows.map(({ id, category, name, description, sourceName }) => ({
         id,
         category,
         name,
+        source: sourceName ?? "",
         description,
       })),
     );
@@ -237,8 +365,12 @@ program
   .description("Run a single scraper and print a short preview.")
   .option("-l, --limit <number>", "Maximum number of records to collect.", "10")
   .option("--out-dir <directory>", "Output directory for saved results.")
-  .option("--output <file>", "Optional JSON file path to save the result.")
+  .option("--output <file>", "Optional file path used when saving the result.")
   .option("--format <pretty|json>", "Console output format.", "pretty")
+  .option(
+    "--save-format <json|csv|ndjson|all>",
+    "Optional saved export format when --output is supplied.",
+  )
   .option("-p, --param <key=value>", "Additional scraper parameter.", collect, [])
   .action(async (scraperId, options) => {
     const scraper = getScraperById(scraperId);
@@ -254,16 +386,109 @@ program
 
 program
   .command("run-all")
-  .description("Run every starter scraper and save each result to a JSON file.")
+  .description("Run every starter scraper and save each result to disk.")
   .option(
     "-c, --category <category>",
     "Optional category filter: news, weather, reports, academic.",
   )
+  .option("-s, --search <text>", "Optional free-text filter.")
   .option("-l, --limit <number>", "Maximum number of records per scraper.", "10")
   .option("--out-dir <directory>", "Output directory.", "output")
+  .option(
+    "--save-format <json|csv|ndjson|all>",
+    "Save JSON, CSV, NDJSON, or all three.",
+    "json",
+  )
   .option("-p, --param <key=value>", "Additional scraper parameter for every run.", collect, [])
   .action(async (options) => {
     await runAllScrapers(options);
+  });
+
+program
+  .command("scrape-links")
+  .argument("<file>", "Text file with one webpage URL per line.")
+  .description(
+    "Scrape a text file of webpage links through the website-links-ai-digest workflow.",
+  )
+  .option("-l, --limit <number>", "Maximum number of URLs to process.", "10")
+  .option("--out-dir <directory>", "Output directory for default paths.")
+  .option("--output <file>", "Optional file path used when saving the result.")
+  .option("--format <pretty|json>", "Console output format.", "pretty")
+  .option(
+    "--save-format <json|csv|ndjson|all>",
+    "Optional saved export format when --output is supplied.",
+  )
+  .option("--use-ai <auto|true|false>", "Control optional AI enrichment.", "auto")
+  .option("--model <name>", "Optional OpenAI model override.")
+  .option("--max-chars <number>", "Maximum page text characters sent for enrichment.")
+  .option("--source-label <label>", "Custom source label for the saved result.")
+  .option("-p, --param <key=value>", "Additional scraper parameter.", collect, [])
+  .action(async (filePath, options) => {
+    await runLinksFile(filePath, options);
+  });
+
+program
+  .command("health")
+  .description("Run lightweight health checks against the selected scrapers.")
+  .option(
+    "-c, --category <category>",
+    "Optional category filter: news, weather, reports, academic.",
+  )
+  .option("-s, --search <text>", "Optional free-text filter.")
+  .option("-l, --limit <number>", "Maximum number of records fetched during each check.", "1")
+  .option("--out-dir <directory>", "Output directory used for context defaults.", "output")
+  .option("--output <file>", "Optional file path used when saving the report.")
+  .option("--format <pretty|json|table>", "Console output format.", "table")
+  .option(
+    "--save-format <json|csv|ndjson|all>",
+    "Optional saved export format when --output is supplied.",
+  )
+  .option("-p, --param <key=value>", "Additional scraper parameter for every check.", collect, [])
+  .action(async (options) => {
+    if (options.category) {
+      normalizeCategoryFilter(options.category);
+    }
+
+    const selected = selectScrapers({
+      category: options.category,
+      search: options.search,
+    });
+
+    if (selected.length === 0) {
+      throw new Error("No scrapers matched the supplied filters.");
+    }
+
+    const result = await runHealthChecks(selected, {
+      buildContext: (scraper) => buildContext(scraper, options),
+    });
+
+    if (options.format === "json") {
+      console.log(JSON.stringify(result, null, 2));
+    } else if (options.format === "pretty") {
+      printResultSummary(result);
+    } else {
+      printHealthSummary(result);
+    }
+
+    await saveIfRequested(
+      result,
+      options,
+      join(options.outDir ?? "output", "source-health-report.json"),
+    );
+  });
+
+program
+  .command("export")
+  .argument("<input>", "Path to an existing saved JSON result.")
+  .description("Export an existing JSON result to CSV, NDJSON, or both.")
+  .option("--format <csv|ndjson|all|json>", "Output format.", "csv")
+  .option("--output <file>", "Optional output file path.")
+  .action(async (input, options) => {
+    await exportSavedResult({
+      format: options.format,
+      input,
+      output: options.output,
+    });
   });
 
 program.parseAsync(process.argv).catch((error: unknown) => {

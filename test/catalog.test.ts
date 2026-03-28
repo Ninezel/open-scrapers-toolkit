@@ -14,7 +14,7 @@ test("filterCatalogEntries applies category and text filters", () => {
   const entries = buildCatalogEntries(getAllScrapers());
   const filtered = filterCatalogEntries(entries, {
     category: "weather",
-    search: "forecast",
+    search: "city forecast",
   });
 
   assert.deepEqual(filtered.map((entry) => entry.id), ["open-meteo-city-forecast"]);

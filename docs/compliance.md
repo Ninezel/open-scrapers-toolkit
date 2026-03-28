@@ -18,12 +18,20 @@ This project is open source, but it is not permissionless in the ethical sense.
 - collecting personal profiles without consent
 - undocumented scraping that others cannot review
 
+## Bulk website list guidance
+
+The `website-links-ai-digest` workflow is meant for public webpages that you already have permission to access.
+
+- do not use it to bypass paywalls, logins, CAPTCHAs, or rate limits
+- do not treat AI summaries as legal, medical, or factual guarantees
+- keep the input list bounded and review source terms before running large batches
+
 ## Operational guidance
 
-- Cache results if you run the same source regularly.
-- Batch large jobs instead of hammering a site.
-- Stop using a source if the provider changes terms in a way that makes scraping inappropriate.
-- Document all new sources clearly in the catalog.
+- cache results if you run the same source regularly
+- batch large jobs instead of hammering a site
+- stop using a source if the provider changes terms in a way that makes scraping inappropriate
+- document all new sources clearly in the catalog
 
 ## Legal note
 
