@@ -6,6 +6,23 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 - No unreleased changes recorded yet.
 
+## 2026-03-28 11:25:15 +00:00
+
+### Environment And Documentation Workflow
+
+- Audited the toolkit environment surface against the actual code, added the missing `RUN_LIVE_TESTS` sample key, and refreshed the repo docs and wiki so `.env` behavior and environment overrides are documented clearly.
+
+### Added
+
+- Added a dedicated environment-variable reference in `docs/environment-variables.md`.
+- Added a matching wiki page in `docs/wiki/Environment-Variables.md`.
+- Added `RUN_LIVE_TESTS=0` to `.env.example`.
+
+### Changed
+
+- Clarified that the CLI auto-loads `.env`, while library consumers should load their own environment or pass options directly.
+- Refreshed installation, troubleshooting, and environment guidance across the repo docs and wiki source.
+
 ## 2026-03-28 11:16:34 +00:00
 
 ### Roadmap Expansion Workflow

@@ -9,3 +9,4 @@
 - health report shows skipped: that scraper probably needs required parameters that were not supplied
 - webhook publishing fails: confirm the webhook expects JSON and that the target URL is correct
 - if you keep getting repeated GET traffic in automations, set `SCRAPERS_CACHE_TTL_MS`
+- if `.env` values are ignored in library code, load them in your host app first because only the CLI auto-loads `.env`

@@ -22,6 +22,7 @@ Use this wiki as the long-form operational guide for the repository.
 Start here:
 
 - [Installation And Quick Start](Installation-and-Quick-Start)
+- [Environment Variables](Environment-Variables)
 - [Library Usage](Library-Usage)
 - [Automation And Publishers](Automation-And-Publishers)
 - [Discord Bot Integration](Discord-Bot-Integration)

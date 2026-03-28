@@ -25,6 +25,16 @@ Try:
 - enabling a small retry count with `SCRAPERS_HTTP_RETRIES`
 - using a contact email in your user agent so public providers can identify your traffic
 
+## `.env` settings do not seem to apply
+
+Check:
+
+- you are running the CLI, which auto-loads `.env` through `dotenv`
+- the `.env` file is in the toolkit repo root
+- you restarted the command after editing `.env`
+
+If you are using the toolkit as a library, load the environment in your own host app or pass the settings directly in code.
+
 ## You want fewer duplicate network calls in bots
 
 Use:

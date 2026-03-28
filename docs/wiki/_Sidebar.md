@@ -3,6 +3,7 @@
 Getting Started
 
 - [Installation And Quick Start](Installation-and-Quick-Start)
+- [Environment Variables](Environment-Variables)
 - [CLI Reference](CLI-Reference)
 - [Library Usage](Library-Usage)
 - [Automation And Publishers](Automation-And-Publishers)

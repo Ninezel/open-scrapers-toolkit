@@ -14,6 +14,8 @@ This guide walks through installing the toolkit, exploring the catalog, running 
 npm install
 ```
 
+The CLI auto-loads a repo-root `.env` file. If you want reusable local defaults, copy `.env.example` to `.env` before running commands.
+
 If you want to embed the toolkit inside a Discord bot or another Node application, you can also install it directly from GitHub:
 
 ```bash
@@ -169,7 +171,10 @@ SCRAPERS_HTTP_TIMEOUT_MS=20000
 SCRAPERS_HTTP_RETRIES=1
 SCRAPERS_HTTP_RETRY_DELAY_MS=750
 SCRAPERS_CACHE_TTL_MS=0
+RUN_LIVE_TESTS=0
 ```
+
+Use `RUN_LIVE_TESTS=1` only when you want the live-source smoke suite to hit real upstream endpoints.
 
 ## Validation
 

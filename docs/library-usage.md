@@ -17,6 +17,8 @@ npm install
 npm run build
 ```
 
+If your app depends on `.env` values, load them in the host process before calling the library, or pass explicit options directly to the helper functions. The CLI auto-loads `.env`; the library surface does not.
+
 ## What the package exports
 
 Root package exports include:

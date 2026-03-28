@@ -2,6 +2,8 @@
 
 Open Scrapers Toolkit can be used directly in Node applications, bots, and automation workers.
 
+If your app depends on `.env` values, load them in the host process first. The CLI auto-loads `.env`, but the library exports do not.
+
 ## Install
 
 ```bash

@@ -265,7 +265,7 @@ Each record may include:
 
 ## Environment variables
 
-Copy `.env.example` to `.env` if you want to customize defaults:
+The CLI auto-loads `.env` from the repo root through `dotenv`. Copy `.env.example` to `.env` if you want to customize defaults for CLI usage:
 
 - `SCRAPERS_USER_AGENT`
 - `SCRAPERS_CONTACT_EMAIL`
@@ -280,6 +280,9 @@ Copy `.env.example` to `.env` if you want to customize defaults:
 - `DEFAULT_WEATHER_LATITUDE`
 - `DEFAULT_WEATHER_LONGITUDE`
 - `DEFAULT_WEATHER_LABEL`
+- `RUN_LIVE_TESTS`
+
+If you are using the toolkit as a library inside your own app or bot, load environment variables in your host process or pass explicit options in code. The library helpers do not auto-read `.env` files on their own.
 
 ## Docker
 
@@ -309,6 +312,7 @@ npm run test:live
 ## Documentation
 
 - [Getting started](docs/getting-started.md)
+- [Environment variables](docs/environment-variables.md)
 - [Architecture](docs/architecture.md)
 - [Library usage](docs/library-usage.md)
 - [Automation and publishers](docs/automation.md)

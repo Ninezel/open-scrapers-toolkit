@@ -7,6 +7,8 @@ npx tsx src/cli.ts run nasa-breaking-news --limit 5
 npx tsx src/cli.ts health --format table
 ```
 
+The CLI auto-loads a repo-root `.env` file through `dotenv`. Copy `.env.example` to `.env` if you want reusable local defaults.
+
 Current catalog size:
 
 - 83 scrapers total
@@ -23,6 +25,7 @@ npm install github:Ninezel/open-scrapers-toolkit
 
 Detailed follow-up pages:
 
+- [Environment Variables](Environment-Variables)
 - [Library Usage](Library-Usage)
 - [Scraper Catalog](Scraper-Catalog)
 - [Roadmap](Roadmap)
