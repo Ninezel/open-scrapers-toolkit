@@ -8,7 +8,7 @@ Common release checklist:
 
 1. add the scraper or topic-pack entry
 2. register it in `src/scrapers/index.ts`
-3. update `docs/scraper-catalog.md`
+3. update the scraper catalogue page at `docs/scraper-catalog.md`
 4. run `npm run check`
 5. run `npm test`
 6. run a live command for the new source

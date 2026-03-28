@@ -4,7 +4,7 @@ This repository is intended to become a broad open-source scraper toolkit and li
 
 ## Completed so far
 
-- grew the starter catalog to 83 scrapers
+- grew the starter catalogue to 84 scrapers
 - added CSV and NDJSON exports
 - added Docker packaging
 - added scheduled source-health automation
@@ -15,8 +15,10 @@ This repository is intended to become a broad open-source scraper toolkit and li
 - added publisher helpers for webhooks, Discord webhooks, and result snapshots
 - added filtered health-alert publishing
 - added contributor templates and richer automation examples
+- added Discord channel-safety helpers, weather-card rendering, and scheduling helpers
+- added Discord channel-policy resolution and delivery-mode profile helpers for bot authors
 
-## What landed in the current expansion
+## What Landed In The Current Expansion
 
 - 55 additional public-interest scrapers
 - new UN News, WHO AFRO, Nature, Crossref, Europe PMC, arXiv, and World Bank packs
@@ -27,9 +29,9 @@ This repository is intended to become a broad open-source scraper toolkit and li
 
 ## Next roadmap priorities after this expansion
 
-## 1. Catalog growth
+## 1. Catalogue Growth
 
-- add another 10 to 15 carefully selected public-interest sources beyond the current 83
+- add another 10 to 15 carefully selected public-interest sources beyond the current 84
 - expand official sources in health, environment, disaster response, and policy research
 - add more geographic coverage instead of relying on only a few English-language sources
 
@@ -44,7 +46,7 @@ Current target sources:
 
 ## 2. Library improvements
 
-- stabilize the public API surface for future npm publishing beyond GitHub installs
+- stabilise the public API surface for future npm publishing beyond GitHub installs
 - add more built-in publisher targets beyond generic and Discord webhooks
 - add cache invalidation helpers and richer result post-processing helpers for apps and bots
 
@@ -71,4 +73,4 @@ Current target sources:
 
 ## Contribution goal
 
-Keep growing the catalog without turning the repo into custom-script sprawl. Shared helpers, clear documentation, stable normalized outputs, and responsible-source rules are what make that possible.
+Keep growing the catalogue without turning the repo into custom-script sprawl. Shared helpers, clear documentation, stable normalised outputs, and responsible-source rules are what make that possible.

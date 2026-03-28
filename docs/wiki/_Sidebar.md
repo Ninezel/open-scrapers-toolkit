@@ -6,9 +6,10 @@ Getting Started
 - [Environment Variables](Environment-Variables)
 - [CLI Reference](CLI-Reference)
 - [Library Usage](Library-Usage)
+- [API Reference](API-Reference)
 - [Automation And Publishers](Automation-And-Publishers)
 - [Discord Bot Integration](Discord-Bot-Integration)
-- [Scraper Catalog](Scraper-Catalog)
+- [Scraper Catalogue](Scraper-Catalog)
 - [Roadmap](Roadmap)
 
 Architecture

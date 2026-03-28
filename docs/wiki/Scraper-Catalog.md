@@ -1,14 +1,14 @@
-# Scraper Catalog
+# Scraper Catalogue
 
 Current totals:
 
-- 83 scrapers overall
-- 17 news
+- 84 scrapers overall
+- 18 news
 - 3 weather
 - 17 reports
 - 46 academic
 
-Use the CLI to inspect the catalog live:
+Use the CLI to inspect the catalogue live:
 
 ```bash
 npx tsx src/cli.ts list
@@ -21,6 +21,7 @@ npx tsx src/cli.ts describe website-links-ai-digest
 - NASA breaking news and image of the day
 - UN News topic feeds
 - WHO AFRO featured news, emergencies, and speeches
+- Reddit random subreddit image posts with required subreddit input and OAuth credentials
 
 ## Weather
 

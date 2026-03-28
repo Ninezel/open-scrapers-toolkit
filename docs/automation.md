@@ -5,7 +5,7 @@ Open Scrapers Toolkit now includes reusable publisher helpers and automation-rea
 ## What is included
 
 - generic JSON webhook publishing
-- Discord webhook publishing for normalized scraper results
+- Discord webhook publishing for normalised scraper results
 - filtered health-alert snapshots
 - file publishing through the normal export helpers
 - example scripts for nightly health checks and result publishing
@@ -64,6 +64,7 @@ npx tsx src/cli.ts health --alert-status error --alert-discord-webhook https://d
 ## Example scripts
 
 - `examples/automation/discord-health-alerts.mjs`
+- `examples/automation/discord-weather-scheduler.mjs`
 - `examples/automation/webhook-result-publisher.mjs`
 - `examples/automation/nightly-health-check.mjs`
 
@@ -73,6 +74,21 @@ These examples are meant to be starting points for:
 - Windows Task Scheduler jobs
 - cron jobs on Linux hosts
 - bot-side publishing workers
+
+The weather scheduler example uses:
+
+- `buildDiscordScheduleProfile()`
+- `shouldRunDiscordSchedule()`
+- `nextDiscordScheduledRunAt()`
+- `weatherCadenceHours` in the Discord formatter
+
+Useful example variables for automation workers:
+
+- `DISCORD_WEATHER_MODE`
+- `DISCORD_WEATHER_INTERVAL_HOURS`
+- `DISCORD_WEATHER_LAST_RUN_AT`
+- `DISCORD_WEBHOOK_URL`
+- `RESULT_WEBHOOK_URL`
 
 ## Cache and retry settings
 

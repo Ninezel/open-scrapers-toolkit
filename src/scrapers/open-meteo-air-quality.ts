@@ -19,6 +19,16 @@ const defaultLatitude = process.env.DEFAULT_WEATHER_LATITUDE ?? "51.5072";
 const defaultLongitude = process.env.DEFAULT_WEATHER_LONGITUDE ?? "-0.1276";
 const defaultLabel = process.env.DEFAULT_WEATHER_LABEL ?? "London";
 
+function resolveStartIndex(times: string[], currentTime: Date): number {
+  const referenceMs = currentTime.getTime();
+  const match = times.findIndex((time) => {
+    const parsed = toIsoDate(time);
+    return parsed ? new Date(parsed).getTime() >= referenceMs : false;
+  });
+
+  return match >= 0 ? match : 0;
+}
+
 const scraper: ScraperDefinition = {
   id: "open-meteo-air-quality",
   name: "Open-Meteo Air Quality",
@@ -73,24 +83,30 @@ const scraper: ScraperDefinition = {
     const pm25 = response.hourly?.pm2_5 ?? [];
     const usAqi = response.hourly?.us_aqi ?? [];
     const uvIndex = response.hourly?.uv_index ?? [];
+    const startIndex = resolveStartIndex(times, context.now);
 
-    const records = take(times, context.limit).map<ScrapedRecord>((time, index) => ({
-      id: buildStableId(scraper.id, label, time),
-      source: "Open-Meteo",
-      title: `Air quality for ${label} at ${time}`,
-      summary: `US AQI ${usAqi[index] ?? "n/a"}, PM2.5 ${pm25[index] ?? "n/a"} ug/m3, PM10 ${pm10[index] ?? "n/a"} ug/m3, UV index ${uvIndex[index] ?? "n/a"}.`,
-      publishedAt: toIsoDate(time),
-      location: label,
-      tags: ["weather", "air-quality", response.timezone ?? "timezone-unknown"],
-      metadata: {
-        latitude: response.latitude,
-        longitude: response.longitude,
-        pm10: pm10[index],
-        pm25: pm25[index],
-        usAqi: usAqi[index],
-        uvIndex: uvIndex[index],
-      },
-    }));
+    const records = take(times.slice(startIndex), context.limit).map<ScrapedRecord>((time, index) => {
+      const sourceIndex = startIndex + index;
+
+      return {
+        id: buildStableId(scraper.id, label, time),
+        source: "Open-Meteo",
+        title: `Air quality for ${label} at ${time}`,
+        summary: `US AQI ${usAqi[sourceIndex] ?? "n/a"}, PM2.5 ${pm25[sourceIndex] ?? "n/a"} ug/m3, PM10 ${pm10[sourceIndex] ?? "n/a"} ug/m3, UV index ${uvIndex[sourceIndex] ?? "n/a"}.`,
+        publishedAt: toIsoDate(time),
+        location: label,
+        tags: ["weather", "air-quality", response.timezone ?? "timezone-unknown"],
+        metadata: {
+          latitude: response.latitude,
+          longitude: response.longitude,
+          pm10: pm10[sourceIndex],
+          pm25: pm25[sourceIndex],
+          timezone: response.timezone,
+          usAqi: usAqi[sourceIndex],
+          uvIndex: uvIndex[sourceIndex],
+        },
+      };
+    });
 
     return {
       scraperId: scraper.id,

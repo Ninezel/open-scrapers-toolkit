@@ -1,6 +1,6 @@
 # Open Scrapers Toolkit
 
-Open Scrapers Toolkit is an open-source TypeScript project for collecting structured data from public news feeds, weather services, report APIs, research indexes, and user-supplied website lists. It ships with a reusable scraper framework, a CLI, export tools, health checks, cache and retry helpers, publisher utilities, Docker support, and a starter catalog of 83 scrapers that people can run, remix, and extend.
+Open Scrapers Toolkit is an open-source TypeScript project for collecting structured data from public news feeds, weather services, report APIs, research indexes, and user-supplied website lists. It ships with a reusable scraper framework, a CLI, export tools, health checks, cache and retry helpers, publisher utilities, Docker support, and a starter catalogue of 84 scrapers that people can run, remix, and extend.
 
 Desktop companion:
 
@@ -18,9 +18,9 @@ Desktop companion:
 
 ## Current feature set
 
-- 83 starter scrapers across `news`, `weather`, `reports`, and `academic`
-- category breakdown: 17 `news`, 3 `weather`, 17 `reports`, 46 `academic`
-- rich catalog discovery with `list`, `describe`, category filters, and search
+- 84 starter scrapers across `news`, `weather`, `reports`, and `academic`
+- category breakdown: 18 `news`, 3 `weather`, 17 `reports`, 46 `academic`
+- rich catalogue discovery with `list`, `describe`, category filters, and search
 - `run`, `run-all`, and `scrape-links` CLI flows
 - CSV and NDJSON exports in addition to JSON
 - `health` command for source-health reporting
@@ -30,14 +30,15 @@ Desktop companion:
 - optional OpenAI enrichment for file-based website link scraping
 - programmatic TypeScript library exports for app and bot integrations
 - Discord-friendly message/embed helpers for `discord.js` and compatible libraries
+- Discord helpers for slash-command choices, channel-policy resolution, NSFW/SFW validation, delivery-mode scheduling, and weather-card formatting
 - automation examples for Discord, webhooks, and nightly health checks
 - contributor templates for RSS, JSON API, and webpage scraper modules
 - Docker packaging and a scheduled GitHub Actions health workflow
 - strict TypeScript checks, automated tests, and optional live-source smoke tests
 
-## Starter catalog
+## Starter Catalogue
 
-The catalog now spans:
+The catalogue now spans:
 
 - BBC, NASA, UN News, WHO AFRO, and Nature feeds
 - Open-Meteo, NWS, and USGS public hazard/weather data
@@ -45,7 +46,7 @@ The catalog now spans:
 - arXiv, Crossref, Europe PMC, and topic-focused research feeds
 - file-based public webpage digest workflows
 
-This README keeps the overview readable by showing the main families below. For the full live list of 83 scraper IDs, use `npx tsx src/cli.ts list --format json` or see [docs/scraper-catalog.md](docs/scraper-catalog.md).
+This README keeps the overview readable by showing the main families below. For the full live list of 84 scraper IDs, use `npx tsx src/cli.ts list --format json` or see [docs/scraper-catalog.md](docs/scraper-catalog.md).
 
 News:
 
@@ -55,6 +56,7 @@ News:
 - `bbc-science-environment-news`
 - `nasa-breaking-news`
 - `nasa-image-of-the-day`
+- `reddit-random-subreddit-image`
 
 Weather:
 
@@ -145,13 +147,19 @@ The toolkit also exposes a Discord-only formatter subpath if you want the helper
 import { resultToDiscordMessages } from "open-scrapers-toolkit/discord";
 ```
 
+Useful bot-side helpers also include `buildDiscordChannelContext()`, `buildDiscordScheduleProfile()`, and `parseDiscordChannelIdList()` for channel safety rules and hourly or every-3-hours delivery modes.
+
+If you want a function-by-function guide for app and bot developers, see [docs/api-reference.md](docs/api-reference.md).
+
 Example bot starter:
 
 - `examples/discord-bots/discordjs-message-command.mjs`
+- `examples/discord-bots/discordjs-subreddit-image-command.mjs`
 
 Automation and publisher examples:
 
 - `examples/automation/discord-health-alerts.mjs`
+- `examples/automation/discord-weather-scheduler.mjs`
 - `examples/automation/webhook-result-publisher.mjs`
 - `examples/automation/nightly-health-check.mjs`
 
@@ -197,7 +205,7 @@ npx tsx src/cli.ts scrape-links examples/url-lists/demo-links.txt --use-ai auto 
 
 ## CLI commands
 
-List the catalog:
+List the catalogue:
 
 ```bash
 npm run list
@@ -209,6 +217,7 @@ Inspect one scraper:
 
 ```bash
 npx tsx src/cli.ts describe open-meteo-air-quality
+npx tsx src/cli.ts describe reddit-random-subreddit-image
 npx tsx src/cli.ts describe website-links-ai-digest --format json
 ```
 
@@ -217,6 +226,7 @@ Run one scraper:
 ```bash
 npx tsx src/cli.ts run nasa-breaking-news --limit 10 --output output/nasa-breaking-news.json
 npx tsx src/cli.ts run open-meteo-air-quality --limit 6 --output output/air-quality.json --save-format all
+npx tsx src/cli.ts run reddit-random-subreddit-image --param subreddit=wallpapers --limit 1 --output output/reddit-image.json
 ```
 
 Run batches:
@@ -241,7 +251,7 @@ npx tsx src/cli.ts export output/bbc-business-news.json --format all --output ou
 
 ## Output format
 
-Each scraper writes a normalized payload:
+Each scraper writes a normalised payload:
 
 - `scraperId`
 - `scraperName`
@@ -265,7 +275,7 @@ Each record may include:
 
 ## Environment variables
 
-The CLI auto-loads `.env` from the repo root through `dotenv`. Copy `.env.example` to `.env` if you want to customize defaults for CLI usage:
+The CLI auto-loads `.env` from the repo root through `dotenv`. Copy `.env.example` to `.env` if you want to customise defaults for CLI usage:
 
 - `SCRAPERS_USER_AGENT`
 - `SCRAPERS_CONTACT_EMAIL`
@@ -277,10 +287,22 @@ The CLI auto-loads `.env` from the repo root through `dotenv`. Copy `.env.exampl
 - `OPENAI_API_KEY`
 - `OPENAI_MODEL`
 - `OPENAI_BASE_URL`
+- `REDDIT_ACCESS_TOKEN`
+- `REDDIT_CLIENT_ID`
+- `REDDIT_CLIENT_SECRET`
+- `REDDIT_USER_AGENT`
 - `DEFAULT_WEATHER_LATITUDE`
 - `DEFAULT_WEATHER_LONGITUDE`
 - `DEFAULT_WEATHER_LABEL`
 - `RUN_LIVE_TESTS`
+- `DISCORD_TOKEN`
+- `DISCORD_PREFIX`
+- `DISCORD_ALLOWED_NSFW_CHANNEL_IDS`
+- `DISCORD_WEATHER_MODE`
+- `DISCORD_WEATHER_INTERVAL_HOURS`
+- `DISCORD_WEATHER_LAST_RUN_AT`
+- `DISCORD_WEBHOOK_URL`
+- `RESULT_WEBHOOK_URL`
 
 If you are using the toolkit as a library inside your own app or bot, load environment variables in your host process or pass explicit options in code. The library helpers do not auto-read `.env` files on their own.
 
@@ -315,9 +337,10 @@ npm run test:live
 - [Environment variables](docs/environment-variables.md)
 - [Architecture](docs/architecture.md)
 - [Library usage](docs/library-usage.md)
+- [API reference](docs/api-reference.md)
 - [Automation and publishers](docs/automation.md)
 - [Discord bot integration](docs/discord-bots.md)
-- [Scraper catalog](docs/scraper-catalog.md)
+- [Scraper catalogue](docs/scraper-catalog.md)
 - [Adding a scraper](docs/adding-a-scraper.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [Compliance and ethics](docs/compliance.md)
@@ -328,16 +351,16 @@ npm run test:live
 
 Current next-step priorities for the toolkit are:
 
-- add another wave of official and public-interest sources beyond the current 83, with OECD and more humanitarian/hazard coverage still high on the list
-- stabilize the library and publisher surface for apps, bots, and webhook-driven automations
+- add another wave of official and public-interest sources beyond the current 84, with OECD and more humanitarian/hazard coverage still high on the list
+- stabilise the library and publisher surface for apps, bots, and webhook-driven automations
 - keep improving live-source monitoring, source-specific troubleshooting, and parser regression coverage
-- expand contributor fixtures, templates, and source-family examples so large catalog growth stays maintainable
+- expand contributor fixtures, templates, and source-family examples so large catalogue growth stays maintainable
 
 The full planning notes live in [docs/roadmap.md](docs/roadmap.md).
 
 ## Open-source standards
 
-- License: MIT
+- Licence: MIT
 - Code of conduct: Contributor Covenant
 - Security policy: see `SECURITY.md`
 - Contribution guide: see `CONTRIBUTING.md`

@@ -411,7 +411,7 @@ program
 
     if (!scraper) {
       throw new Error(
-        `Unknown scraper "${scraperId}". Run "npm run list" to inspect the catalog.`,
+        `Unknown scraper "${scraperId}". Run "npm run list" to inspect the catalogue.`,
       );
     }
 
@@ -443,7 +443,7 @@ program
 
     if (!scraper) {
       throw new Error(
-        `Unknown scraper "${scraperId}". Run "npm run list" to inspect the catalog.`,
+        `Unknown scraper "${scraperId}". Run "npm run list" to inspect the catalogue.`,
       );
     }
 

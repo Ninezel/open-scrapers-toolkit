@@ -2,7 +2,7 @@
 
 This page lists the environment variables used by Open Scrapers Toolkit and explains where they apply.
 
-## `.env` behavior
+## `.env` behaviour
 
 The CLI loads a repo-root `.env` file automatically through `dotenv`.
 
@@ -45,6 +45,19 @@ The library surface does not auto-load `.env` by itself.
 - `OPENAI_BASE_URL`
   Optional override for the OpenAI-compatible base URL. Defaults to `https://api.openai.com/v1`.
 
+## Reddit image scraping
+
+- `REDDIT_ACCESS_TOKEN`
+  Optional direct bearer token for Reddit's OAuth-protected data API.
+- `REDDIT_CLIENT_ID`
+  Client ID used when the toolkit resolves a Reddit app-only access token.
+- `REDDIT_CLIENT_SECRET`
+  Client secret used when the toolkit resolves a Reddit app-only access token.
+- `REDDIT_USER_AGENT`
+  Recommended custom user agent for Reddit API requests.
+
+The `reddit-random-subreddit-image` scraper and Reddit image helper functions require a Reddit OAuth token or client credentials.
+
 ## Weather defaults
 
 - `DEFAULT_WEATHER_LATITUDE`
@@ -58,3 +71,22 @@ The library surface does not auto-load `.env` by itself.
 
 - `RUN_LIVE_TESTS`
   When set to `1`, enables `npm run test:live` against real upstream sources. Keep this unset or `0` for normal local work.
+
+## Discord bot examples
+
+- `DISCORD_TOKEN`
+  Bot token used by the `discord.js` examples.
+- `DISCORD_PREFIX`
+  Prefix used by the starter command examples.
+- `DISCORD_ALLOWED_NSFW_CHANNEL_IDS`
+  Comma-separated list of Discord channel IDs that your bot is allowed to treat as NSFW-enabled when combined with the real channel NSFW flag.
+- `DISCORD_WEATHER_MODE`
+  Delivery mode used by the weather examples. Supported example values are `hourly`, `every-3-hours`, and `custom`.
+- `DISCORD_WEATHER_INTERVAL_HOURS`
+  Optional cadence used by the scheduled weather example. This is mainly useful when `DISCORD_WEATHER_MODE=custom`.
+- `DISCORD_WEATHER_LAST_RUN_AT`
+  Optional ISO timestamp used by the weather scheduler example to decide whether another run is due.
+- `DISCORD_WEBHOOK_URL`
+  Example Discord webhook target used by the Discord publishing examples.
+- `RESULT_WEBHOOK_URL`
+  Example generic webhook target used by the generic JSON publishing example.

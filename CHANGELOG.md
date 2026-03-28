@@ -6,11 +6,67 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 - No unreleased changes recorded yet.
 
+## 2026-03-28 12:04:28 +00:00
+
+### Library Reference Documentation Workflow
+
+- Added a full function-by-function reference for app and bot developers, improved editor-facing JSDoc coverage, and linked the new reference page throughout the docs and wiki.
+
+### Added
+
+- Added [docs/api-reference.md](docs/api-reference.md) as the detailed library and Discord helper reference.
+- Added [docs/wiki/API-Reference.md](docs/wiki/API-Reference.md) as the matching GitHub wiki page.
+
+### Changed
+
+- Added JSDoc comments to the main library runner helpers, publisher helpers, Reddit image helper, and Discord helper exports so TypeScript users see clearer editor tooltips.
+- Updated README, getting started, library usage, Discord bot docs, wiki home, wiki sidebar, and related wiki pages to point developers to the new API reference.
+
+## 2026-03-28 11:58:36 +00:00
+
+### Discord Safety And Scheduling Refinement
+
+- Tightened the Discord bot workflow with channel-policy helpers, delivery-mode profiles, cleaner example configuration, and a full documentation pass for the new Reddit image and weather-card features.
+
+### Added
+
+- Added `buildDiscordChannelContext()` and `parseDiscordChannelIdList()` so bot authors can gate NSFW output by both real channel flags and explicit allow-lists.
+- Added `buildDiscordScheduleProfile()` so hourly, every-3-hours, custom-interval, and on-demand flows can share the same scheduling setup.
+
+### Changed
+
+- Updated the Discord examples to use reusable channel-policy helpers instead of ad hoc NSFW checks.
+- Updated the weather scheduler example to use delivery-mode profiles for hourly, every-3-hours, or custom cadence configuration.
+- Updated `.env.example`, environment docs, library docs, automation docs, README, and wiki pages to document the new Discord helper flow and example variables.
+- Corrected the generic webhook example to use `SCRAPERS_CONTACT_EMAIL`.
+
+## 2026-03-28 11:44:50 +00:00
+
+### Discord Bot Workflow Expansion
+
+- Expanded the Discord-side library surface with safer channel validation, richer weather presentation, scheduling helpers, Reddit image support, and updated examples/docs for bot developers.
+
+### Added
+
+- Added `reddit-random-subreddit-image` as a bot-friendly scraper for subreddit image posts.
+- Added `src/core/reddit.ts` for Reddit OAuth token handling and random subreddit image selection.
+- Added `src/core/weather.ts` for Open-Meteo weather-code interpretation used by Discord weather cards.
+- Added Discord helpers for channel-safety validation, cadence selection, schedule timing, and scraper-choice generation.
+- Added `examples/discord-bots/discordjs-subreddit-image-command.mjs`.
+- Added `examples/automation/discord-weather-scheduler.mjs`.
+- Added `test/reddit.test.ts` and expanded `test/discord.test.ts`.
+
+### Changed
+
+- Updated the main `discord.js` example to support scraper parameters, richer embeds, and safe NSFW channel handling.
+- Updated `open-meteo-city-forecast` so Discord weather cards can show condition, humidity, sunrise, sunset, and better cadence-based forecast summaries.
+- Updated README, docs, wiki pages, and `.env.example` to document Reddit credentials, Discord example variables, and the new bot helper functions.
+
 ## 2026-03-28 11:25:15 +00:00
 
 ### Environment And Documentation Workflow
 
-- Audited the toolkit environment surface against the actual code, added the missing `RUN_LIVE_TESTS` sample key, and refreshed the repo docs and wiki so `.env` behavior and environment overrides are documented clearly.
+- Audited the toolkit environment surface against the actual code, added the missing `RUN_LIVE_TESTS` sample key, and refreshed the repo docs and wiki so `.env` behaviour and environment overrides are documented clearly.
 
 ### Added
 
@@ -27,11 +83,11 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 ### Roadmap Expansion Workflow
 
-- Completed the next major roadmap pass by growing the public-source catalog, deepening app and bot helpers, and refreshing the repo docs, wiki source, and release workflow around a timestamped changelog format.
+- Completed the next major roadmap pass by growing the public-source catalogue, deepening app and bot helpers, and refreshing the repo docs, wiki source, and release workflow around a timestamped changelog format.
 
 ### Added
 
-- Added 55 new scrapers, growing the starter catalog from 28 to 83 scrapers.
+- Added 55 new scrapers, growing the starter catalogue from 28 to 83 scrapers.
 - Added 8 UN News topic feeds for climate change, health, human rights, peace and security, women, migrants and refugees, humanitarian aid, and the SDGs.
 - Added 3 WHO AFRO feeds for featured news, emergencies, and speeches.
 - Added 5 Nature topic feeds for climate change, machine learning, genetics, cancer, and ecology.
@@ -48,10 +104,10 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 ### Changed
 
-- Updated `src/core/http.ts` to support retry and backoff behavior for transient public-source failures.
+- Updated `src/core/http.ts` to support retry and backoff behaviour for transient public-source failures.
 - Updated the CLI health workflow so maintainers can publish filtered alerts without writing their own glue code.
 - Updated the library context surface to accept cache, retry, and delay settings from app and bot code.
-- Updated README, docs, wiki pages, and roadmap guidance to reflect the 83-scraper catalog and the new automation/publisher workflow.
+- Updated README, docs, wiki pages, and roadmap guidance to reflect the 83-scraper catalogue and the new automation/publisher workflow.
 - Updated changelog guidance so same-day releases are separated by date-and-time headings instead of a shared daily block.
 
 ### Maintenance
@@ -72,7 +128,7 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 ### Changed
 
 - Expanded the roadmap into concrete next priorities around source growth, library helpers, reliability, and ecosystem support.
-- Updated README, docs, and wiki content to reflect the larger catalog and new workflows.
+- Updated README, docs, and wiki content to reflect the larger catalogue and new workflows.
 
 ## 2026-03-28 10:31:24 +00:00
 
@@ -88,7 +144,7 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 ### Changed
 
-- Updated package exports, type declarations, and Git install behavior so the toolkit can be consumed as a library from GitHub.
+- Updated package exports, type declarations, and Git install behaviour so the toolkit can be consumed as a library from GitHub.
 
 ## 2026-03-28 10:04:29 +00:00
 
@@ -98,7 +154,7 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 ### Added
 
-- Added 13 new scrapers, growing the starter catalog to 28 modules across news, weather, reports, academic sources, and a new file-based bulk website workflow.
+- Added 13 new scrapers, growing the starter catalogue to 28 modules across news, weather, reports, academic sources, and a new file-based bulk website workflow.
 - Added `scrape-links` for line-by-line webpage lists.
 - Added `website-links-ai-digest` with optional OpenAI enrichment for summary and tag generation.
 - Added CSV and NDJSON export support for saved results.
@@ -115,10 +171,10 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 ### Changed
 
-- Expanded the CLI to cover bulk-link scraping, health checks, and richer export behavior.
-- Improved catalog output so the growing scraper list remains discoverable.
-- Updated README, docs, and wiki content to reflect the larger catalog and new workflows.
-- Updated package exports, type declarations, and Git install behavior so the toolkit can be consumed as a library from GitHub.
+- Expanded the CLI to cover bulk-link scraping, health checks, and richer export behaviour.
+- Improved catalogue output so the growing scraper list remains discoverable.
+- Updated README, docs, and wiki content to reflect the larger catalogue and new workflows.
+- Updated package exports, type declarations, and Git install behaviour so the toolkit can be consumed as a library from GitHub.
 - Expanded the roadmap into concrete next priorities around source growth, library helpers, reliability, and ecosystem support.
 
 ### Maintenance

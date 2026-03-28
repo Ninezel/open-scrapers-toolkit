@@ -4,8 +4,8 @@ Open Scrapers Toolkit is an open-source TypeScript toolkit for collecting struct
 
 Current highlights:
 
-- 83 starter scrapers
-- 17 news, 3 weather, 17 reports, and 46 academic scrapers
+- 84 starter scrapers
+- 18 news, 3 weather, 17 reports, and 46 academic scrapers
 - JSON, CSV, and NDJSON exports
 - `health` source-health reporting
 - filtered health-alert publishing
@@ -14,6 +14,7 @@ Current highlights:
 - cache and retry helpers for app and bot integrations
 - TypeScript library exports for apps and Discord bots
 - Discord-friendly embed/message helpers
+- Discord channel-safety, channel-policy, schedule, and weather-card helpers
 - webhook and snapshot publisher helpers
 - Docker packaging and scheduled GitHub health automation
 
@@ -24,7 +25,8 @@ Start here:
 - [Installation And Quick Start](Installation-and-Quick-Start)
 - [Environment Variables](Environment-Variables)
 - [Library Usage](Library-Usage)
+- [API Reference](API-Reference)
 - [Automation And Publishers](Automation-And-Publishers)
 - [Discord Bot Integration](Discord-Bot-Integration)
-- [Scraper Catalog](Scraper-Catalog)
+- [Scraper Catalogue](Scraper-Catalog)
 - [Roadmap](Roadmap)

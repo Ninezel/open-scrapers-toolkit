@@ -2,6 +2,8 @@
 
 Open Scrapers Toolkit can be used as a CLI, but it is also a reusable TypeScript library for bots, apps, dashboards, and automation workers.
 
+If you want a function-by-function breakdown with return values, option meanings, and “when should I use this?” guidance, read [api-reference.md](api-reference.md) alongside this page.
+
 ## Install options
 
 Install from the GitHub repository:
@@ -23,12 +25,14 @@ If your app depends on `.env` values, load them in the host process before calli
 
 Root package exports include:
 
-- catalog helpers such as `getScraperCatalog()`
+- catalogue helpers such as `getScraperCatalog()`
 - registry access through the main library surface
 - runner helpers such as `runScraperById()`
 - health reporting with `runLibraryHealth()`
 - generic publisher helpers such as `postJsonWebhook()` and `publishResultSnapshot()`
+- Discord publisher helpers such as `publishDiscordWebhookMessages()`
 - Discord payload formatting helpers such as `resultToDiscordMessages()`
+- Reddit image helper functions such as `fetchRandomSubredditImageRecords()`
 
 Discord-only subpath:
 
@@ -36,16 +40,27 @@ Discord-only subpath:
 import { resultToDiscordMessages, runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
 ```
 
-The root package also re-exports publisher helpers such as `buildHealthAlertResult()`, `postJsonWebhook()`, and `publishResultSnapshot()`.
+The root package also re-exports publisher helpers such as `buildHealthAlertResult()`, `postJsonWebhook()`, `publishDiscordWebhookMessages()`, and `publishResultSnapshot()`.
+
+Useful Discord-side helpers now also include:
+
+- `buildDiscordChannelContext()`
+- `buildDiscordScheduleProfile()`
+- `buildDiscordScraperChoices()`
+- `filterDiscordResultForChannel()`
+- `nextDiscordScheduledRunAt()`
+- `parseDiscordChannelIdList()`
+- `selectWeatherCadenceRecords()`
+- `shouldRunDiscordSchedule()`
 
 ## Typical usage flow
 
-1. Discover a scraper or filter the catalog.
+1. Discover a scraper or filter the catalogue.
 2. Run one scraper, a category, or a filtered set.
-3. Use the normalized `ScrapeResult` object in your own code.
+3. Use the normalised `ScrapeResult` object in your own code.
 4. Optionally render the result to Discord-style message payloads.
 
-## Discover the catalog
+## Discover the Catalogue
 
 ```js
 import { getScraperCatalog } from "open-scrapers-toolkit";
@@ -56,7 +71,7 @@ const academicClimate = getScraperCatalog({
 });
 ```
 
-Each catalog entry includes:
+Each catalogue entry includes:
 
 - `id`
 - `name`
@@ -175,7 +190,7 @@ const health = await runLibraryHealth({
 const alerts = buildHealthAlertResult(health, "error,skipped");
 ```
 
-## Normalized result shape
+## Normalised Result Shape
 
 Every scraper returns:
 
@@ -230,6 +245,71 @@ import { runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
 ```
 
 Use this when you want a direct scrape-to-message flow inside `discord.js` or a compatible library.
+
+Channel-safety example:
+
+```js
+import {
+  buildDiscordChannelContext,
+  parseDiscordChannelIdList,
+  resultToDiscordMessages,
+  runScraperById,
+} from "open-scrapers-toolkit";
+
+const result = await runScraperById("reddit-random-subreddit-image", {
+  contactEmail: "bot@example.com",
+  limit: 1,
+  params: {
+    subreddit: "wallpapers",
+  },
+});
+
+const allowedNsfwChannelIds = parseDiscordChannelIdList(
+  process.env.DISCORD_ALLOWED_NSFW_CHANNEL_IDS,
+);
+
+const messages = resultToDiscordMessages(result, {
+  channel: buildDiscordChannelContext(
+    {
+      id: "123456789012345678",
+      name: "general",
+      nsfw: false,
+    },
+    {
+      nsfwEnabledChannelIds: allowedNsfwChannelIds,
+    },
+  ),
+  includeImages: true,
+});
+```
+
+Weather cadence example:
+
+```js
+import {
+  buildDiscordScheduleProfile,
+  nextDiscordScheduledRunAt,
+  resultToDiscordMessages,
+  runScraperById,
+  shouldRunDiscordSchedule,
+} from "open-scrapers-toolkit";
+
+const profile = buildDiscordScheduleProfile("every-3-hours");
+
+if (shouldRunDiscordSchedule(process.env.DISCORD_WEATHER_LAST_RUN_AT, profile.schedule)) {
+  const weatherResult = await runScraperById("open-meteo-city-forecast", {
+    contactEmail: "bot@example.com",
+    limit: 4,
+  });
+
+  const messages = resultToDiscordMessages(weatherResult, {
+    style: "auto",
+    weatherCadenceHours: profile.weatherCadenceHours,
+  });
+
+  console.log(nextDiscordScheduledRunAt(profile.schedule).toISOString(), messages.length);
+}
+```
 
 ## Export and file-saving choices
 

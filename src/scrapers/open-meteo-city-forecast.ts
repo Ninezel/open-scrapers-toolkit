@@ -1,4 +1,5 @@
 import { fetchJson } from "../core/http.js";
+import { describeOpenMeteoWeather } from "../core/weather.js";
 import type {
   ScrapedRecord,
   ScrapeResult,
@@ -11,16 +12,25 @@ interface OpenMeteoResponse {
   longitude?: number;
   timezone?: string;
   current?: {
+    apparent_temperature?: number;
+    is_day?: number;
+    relative_humidity_2m?: number;
     time?: string;
     temperature_2m?: number;
-    relative_humidity_2m?: number;
+    weather_code?: number;
     wind_speed_10m?: number;
   };
+  daily?: {
+    sunrise?: string[];
+    sunset?: string[];
+  };
   hourly?: {
+    apparent_temperature?: number[];
+    relative_humidity_2m?: number[];
     time?: string[];
     temperature_2m?: number[];
-    apparent_temperature?: number[];
     precipitation_probability?: number[];
+    weather_code?: number[];
     wind_speed_10m?: number[];
   };
 }
@@ -28,6 +38,22 @@ interface OpenMeteoResponse {
 const defaultLatitude = process.env.DEFAULT_WEATHER_LATITUDE ?? "51.5072";
 const defaultLongitude = process.env.DEFAULT_WEATHER_LONGITUDE ?? "-0.1276";
 const defaultLabel = process.env.DEFAULT_WEATHER_LABEL ?? "London";
+
+function resolveStartIndex(times: string[], currentTime: string | undefined): number {
+  const reference = toIsoDate(currentTime);
+
+  if (!reference) {
+    return 0;
+  }
+
+  const referenceMs = new Date(reference).getTime();
+  const match = times.findIndex((time) => {
+    const parsed = toIsoDate(time);
+    return parsed ? new Date(parsed).getTime() >= referenceMs : false;
+  });
+
+  return match >= 0 ? match : 0;
+}
 
 const scraper: ScraperDefinition = {
   id: "open-meteo-city-forecast",
@@ -78,12 +104,13 @@ const scraper: ScraperDefinition = {
     endpoint.searchParams.set("forecast_days", context.params.days);
     endpoint.searchParams.set(
       "current",
-      "temperature_2m,relative_humidity_2m,wind_speed_10m",
+      "temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code,is_day",
     );
     endpoint.searchParams.set(
       "hourly",
-      "temperature_2m,apparent_temperature,precipitation_probability,wind_speed_10m",
+      "temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,wind_speed_10m,weather_code",
     );
+    endpoint.searchParams.set("daily", "sunrise,sunset");
 
     const response = await fetchJson<OpenMeteoResponse>(context, endpoint.toString(), {
       headers: {
@@ -95,26 +122,47 @@ const scraper: ScraperDefinition = {
     const times = response.hourly?.time ?? [];
     const temperatures = response.hourly?.temperature_2m ?? [];
     const apparentTemperatures = response.hourly?.apparent_temperature ?? [];
+    const relativeHumidity = response.hourly?.relative_humidity_2m ?? [];
     const precipitationProbabilities =
       response.hourly?.precipitation_probability ?? [];
+    const weatherCodes = response.hourly?.weather_code ?? [];
     const windSpeeds = response.hourly?.wind_speed_10m ?? [];
+    const sunrise = response.daily?.sunrise?.[0];
+    const sunset = response.daily?.sunset?.[0];
+    const startIndex = resolveStartIndex(times, response.current?.time);
 
-    const records = take(times, context.limit).map<ScrapedRecord>((time, index) => ({
-      id: buildStableId("open-meteo-city-forecast", label, time),
-      source: "Open-Meteo",
-      title: `Forecast for ${label} at ${time}`,
-      summary: `${temperatures[index] ?? "n/a"} C, feels like ${apparentTemperatures[index] ?? "n/a"} C, precipitation probability ${precipitationProbabilities[index] ?? "n/a"}%, wind ${windSpeeds[index] ?? "n/a"} km/h.`,
-      publishedAt: toIsoDate(time),
-      location: label,
-      tags: ["weather", "forecast", response.timezone ?? "timezone-unknown"],
-      metadata: {
-        latitude: response.latitude,
-        longitude: response.longitude,
-        apparentTemperature: apparentTemperatures[index],
-        precipitationProbability: precipitationProbabilities[index],
-        windSpeed10m: windSpeeds[index],
-      },
-    }));
+    const records = take(times.slice(startIndex), context.limit).map<ScrapedRecord>((time, index) => {
+      const sourceIndex = startIndex + index;
+
+      return {
+        id: buildStableId("open-meteo-city-forecast", label, time),
+        source: "Open-Meteo",
+        title: `Forecast for ${label} at ${time}`,
+        summary: `${describeOpenMeteoWeather(weatherCodes[sourceIndex], response.current?.is_day !== 0).label}, ${temperatures[sourceIndex] ?? "n/a"} C, feels like ${apparentTemperatures[sourceIndex] ?? "n/a"} C, humidity ${relativeHumidity[sourceIndex] ?? response.current?.relative_humidity_2m ?? "n/a"}%, precipitation probability ${precipitationProbabilities[sourceIndex] ?? "n/a"}%, wind ${windSpeeds[sourceIndex] ?? "n/a"} km/h.`,
+        publishedAt: toIsoDate(time),
+        location: label,
+        tags: ["weather", "forecast", response.timezone ?? "timezone-unknown"],
+        metadata: {
+          apparentTemperature: apparentTemperatures[sourceIndex],
+          currentApparentTemperature: response.current?.apparent_temperature,
+          currentTemperature: response.current?.temperature_2m,
+          currentTime: response.current?.time,
+          currentWeatherCode: response.current?.weather_code,
+          isDay: response.current?.is_day !== 0,
+          latitude: response.latitude,
+          longitude: response.longitude,
+          precipitationProbability: precipitationProbabilities[sourceIndex],
+          relativeHumidity:
+            relativeHumidity[sourceIndex] ?? response.current?.relative_humidity_2m,
+          sunrise,
+          sunset,
+          temperature: temperatures[sourceIndex],
+          timezone: response.timezone,
+          weatherCode: weatherCodes[sourceIndex],
+          windSpeed10m: windSpeeds[sourceIndex],
+        },
+      };
+    });
 
     return {
       scraperId: scraper.id,
@@ -127,6 +175,8 @@ const scraper: ScraperDefinition = {
         endpoint: endpoint.toString(),
         label,
         current: response.current,
+        daily: response.daily,
+        timezone: response.timezone,
       },
     };
   },

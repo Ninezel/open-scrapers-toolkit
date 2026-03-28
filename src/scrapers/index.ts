@@ -22,6 +22,7 @@ import natureTopicPack from "./nature-topic-pack.js";
 import nwsActiveAlerts from "./nws-active-alerts.js";
 import openMeteoAirQuality from "./open-meteo-air-quality.js";
 import openMeteoCityForecast from "./open-meteo-city-forecast.js";
+import redditRandomSubredditImage from "./reddit-random-subreddit-image.js";
 import unNewsTopicPack from "./un-news-topic-pack.js";
 import usgsEarthquakes from "./usgs-earthquakes.js";
 import websiteLinksAiDigest from "./website-links-ai-digest.js";
@@ -59,6 +60,7 @@ export const scrapers = [
   nwsActiveAlerts,
   openMeteoAirQuality,
   openMeteoCityForecast,
+  redditRandomSubredditImage,
   ...unNewsTopicPack,
   usgsEarthquakes,
   websiteLinksAiDigest,

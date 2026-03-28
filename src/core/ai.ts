@@ -115,7 +115,7 @@ export async function enrichPageWithOpenAi(
             {
               type: "input_text",
               text: [
-                "You are helping an open-source scraping toolkit normalize web pages.",
+                "You are helping an open-source scraping toolkit normalise web pages.",
                 "Return strict JSON with keys summary, tags, contentType, readingTimeMinutes.",
                 "Summary must be under 90 words.",
                 "Tags must be an array of up to 6 short lowercase tags.",

@@ -6,7 +6,7 @@ Check:
 
 - the scraper file is included in `src/scrapers/index.ts`
 - parameter examples are strings
-- the scraper returns a normalized `ScrapeResult`
+- the scraper returns a normalised `ScrapeResult`
 
 ## `npm test` passes but a live scraper still fails
 

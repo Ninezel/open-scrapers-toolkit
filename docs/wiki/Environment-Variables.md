@@ -18,6 +18,13 @@ AI variables:
 - `OPENAI_MODEL`
 - `OPENAI_BASE_URL`
 
+Reddit image scraping:
+
+- `REDDIT_ACCESS_TOKEN`
+- `REDDIT_CLIENT_ID`
+- `REDDIT_CLIENT_SECRET`
+- `REDDIT_USER_AGENT`
+
 Weather defaults:
 
 - `DEFAULT_WEATHER_LATITUDE`
@@ -27,6 +34,17 @@ Weather defaults:
 Testing:
 
 - `RUN_LIVE_TESTS`
+
+Discord examples:
+
+- `DISCORD_TOKEN`
+- `DISCORD_PREFIX`
+- `DISCORD_ALLOWED_NSFW_CHANNEL_IDS`
+- `DISCORD_WEATHER_MODE`
+- `DISCORD_WEATHER_INTERVAL_HOURS`
+- `DISCORD_WEATHER_LAST_RUN_AT`
+- `DISCORD_WEBHOOK_URL`
+- `RESULT_WEBHOOK_URL`
 
 Use `RUN_LIVE_TESTS=1` only when you want `npm run test:live` to hit upstream sources.
 

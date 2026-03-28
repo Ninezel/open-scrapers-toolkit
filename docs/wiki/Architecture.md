@@ -17,4 +17,4 @@ Important modules:
 - `src/core/health.ts`
 - `src/scrapers/`
 
-The CLI builds a `ScraperContext`, runs one or more scrapers, normalizes outputs into a shared result shape, and then prints, saves, or publishes outputs. The same shared modules now also back programmatic Node usage, health alert publishing, and Discord bot integrations.
+The CLI builds a `ScraperContext`, runs one or more scrapers, normalises outputs into a shared result shape, and then prints, saves, or publishes outputs. The same shared modules now also back programmatic Node usage, health alert publishing, and Discord bot integrations.

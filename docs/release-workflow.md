@@ -5,7 +5,7 @@ This repository uses a lightweight documented workflow so big feature passes do 
 ## Standard workflow
 
 1. implement the code changes
-2. update the scraper catalog and user docs
+2. update the scraper catalogue and user docs
 3. update `CHANGELOG.md` with the current date and timestamp
 4. run `npm run check`
 5. run `npm test`

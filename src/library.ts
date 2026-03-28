@@ -12,6 +12,10 @@ import type {
   ScraperDefinition,
 } from "./core/types.js";
 
+/**
+ * Common runtime options accepted by the library runner helpers.
+ * These mirror the same ideas used by the CLI, but are passed directly in code.
+ */
 export interface LibraryContextOptions {
   cacheTtlMs?: number;
   contactEmail?: string;
@@ -24,6 +28,10 @@ export interface LibraryContextOptions {
   userAgent?: string;
 }
 
+/**
+ * Options for helpers that run more than one scraper.
+ * Use `category` and `search` to filter the catalogue before execution.
+ */
 export interface RunManyOptions extends LibraryContextOptions {
   category?: string;
   search?: string;
@@ -37,6 +45,10 @@ function defaultUserAgent(contactEmail?: string): string {
   return "OpenScrapers/0.3.0";
 }
 
+/**
+ * Builds the normalised scraper context object used by every scraper module.
+ * Most app developers will call `runScraperById()` instead of this directly.
+ */
 export function createScraperContext(
   scraper: ScraperDefinition,
   options: LibraryContextOptions = {},
@@ -57,6 +69,10 @@ export function createScraperContext(
   };
 }
 
+/**
+ * Returns a filtered catalogue that is suitable for bot command pickers,
+ * app-side discovery screens, or validating scraper IDs before execution.
+ */
 export function getScraperCatalog(options: {
   category?: string;
   search?: string;
@@ -64,6 +80,10 @@ export function getScraperCatalog(options: {
   return filterCatalogEntries(buildCatalogEntries(getAllScrapers()), options);
 }
 
+/**
+ * Runs a scraper definition directly.
+ * Use this when you already have the scraper object and do not need ID lookup.
+ */
 export async function runScraper(
   scraper: ScraperDefinition,
   options: LibraryContextOptions = {},
@@ -71,6 +91,10 @@ export async function runScraper(
   return scraper.run(createScraperContext(scraper, options));
 }
 
+/**
+ * Runs one scraper by its catalogue ID and returns a normalised `ScrapeResult`.
+ * This is the main entry point for most app and bot integrations.
+ */
 export async function runScraperById(
   scraperId: string,
   options: LibraryContextOptions = {},
@@ -84,6 +108,10 @@ export async function runScraperById(
   return runScraper(scraper, options);
 }
 
+/**
+ * Runs every scraper in a single category such as `news` or `weather`.
+ * Returns one normalised result per scraper.
+ */
 export async function runScrapersByCategory(
   category: ScraperCategory,
   options: RunManyOptions = {},
@@ -94,6 +122,10 @@ export async function runScrapersByCategory(
   return Promise.all(selected.map((scraper) => runScraper(scraper, options)));
 }
 
+/**
+ * Runs a filtered slice of the catalogue using the same `category` and `search`
+ * style filters used by the catalogue view helpers.
+ */
 export async function runScrapersFromCatalog(
   options: RunManyOptions = {},
 ): Promise<ScrapeResult[]> {
@@ -111,6 +143,10 @@ export async function runScrapersFromCatalog(
   );
 }
 
+/**
+ * Runs the built-in source health workflow from code and returns the health
+ * report in the same normalised `ScrapeResult` shape used elsewhere.
+ */
 export async function runLibraryHealth(
   options: RunManyOptions = {},
 ): Promise<ScrapeResult> {

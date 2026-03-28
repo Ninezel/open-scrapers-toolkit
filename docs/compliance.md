@@ -31,7 +31,7 @@ The `website-links-ai-digest` workflow is meant for public webpages that you alr
 - cache results if you run the same source regularly
 - batch large jobs instead of hammering a site
 - stop using a source if the provider changes terms in a way that makes scraping inappropriate
-- document all new sources clearly in the catalog
+- document all new sources clearly in the catalogue
 
 ## Legal note
 

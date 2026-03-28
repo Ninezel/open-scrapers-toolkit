@@ -4,17 +4,19 @@ Open Scrapers Toolkit is growing into a reusable scraping library, not just a te
 
 ## Completed in the latest expansion
 
-- grew the catalog to 83 scrapers
+- grew the catalogue to 84 scrapers
 - added cache and retry helpers
 - added webhook and Discord webhook publishers
 - added filtered health-alert publishing
 - added contributor templates and automation examples
+- added Discord channel-safety, scheduling, and weather-card helpers
+- added Discord channel-policy and delivery-mode helpers for bot authors
 
 ## Next priorities
 
 - add another 10 to 15 public-interest sources
 - deepen official health, climate, disaster, and policy coverage
-- stabilize the library and publisher API surface for long-term reuse
+- stabilise the library and publisher API surface for long-term reuse
 - improve live-source monitoring, fixtures, and troubleshooting notes
 - deepen Discord, webhook, cron, and automation examples
 

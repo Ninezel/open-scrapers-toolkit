@@ -3,7 +3,7 @@
 Recommended contributor loop:
 
 1. add or edit a scraper
-2. update docs and catalog pages
+2. update docs and catalogue pages
 3. update `CHANGELOG.md` with the current date
 4. run `npm run check`
 5. run `npm test`

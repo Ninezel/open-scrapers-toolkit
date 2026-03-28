@@ -7,7 +7,7 @@ if (!webhookUrl) {
 }
 
 const result = await runScraperById("bbc-world-news", {
-  contactEmail: process.env.SCRAPER_CONTACT_EMAIL,
+  contactEmail: process.env.SCRAPERS_CONTACT_EMAIL,
   limit: 3,
 });
 

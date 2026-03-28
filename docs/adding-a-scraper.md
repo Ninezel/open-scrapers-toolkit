@@ -9,7 +9,7 @@ Check these first:
 - Is the source official, public, and appropriate?
 - Is there an API or RSS feed before HTML scraping?
 - Do we need the data often enough to justify a new module?
-- Can the source be represented in the normalized record format?
+- Can the source be represented in the normalised record format?
 
 ## Fast path for common sources
 
@@ -35,7 +35,7 @@ Starter templates live in `templates/`:
 2. Export a `ScraperDefinition`.
 3. Add it to `src/scrapers/index.ts`.
 4. Document defaults and parameters.
-5. Update `docs/scraper-catalog.md`.
+5. Update the scraper catalogue page at `docs/scraper-catalog.md`.
 6. Add or update tests.
 7. Run `npm run check`, `npm test`, and a live run of the scraper.
 

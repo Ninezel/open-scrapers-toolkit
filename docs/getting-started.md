@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide walks through installing the toolkit, exploring the catalog, running scrapers, using the TypeScript library exports, exporting results, publishing health alerts, and working with the file-based website link workflow.
+This guide walks through installing the toolkit, exploring the catalogue, running scrapers, using the TypeScript library exports, exporting results, publishing health alerts, and working with the file-based website link workflow.
 
 ## Requirements
 
@@ -36,9 +36,9 @@ Use the library when you want:
 - Discord bots or chat commands
 - a web app or API server that calls scrapers on demand
 - your own scheduler, queue, or webhook publisher
-- direct access to normalized result objects in code
+- direct access to normalised result objects in code
 
-## Inspect the catalog
+## Inspect the Catalogue
 
 ```bash
 npm run list
@@ -46,9 +46,9 @@ npx tsx src/cli.ts list --category weather --search forecast
 npx tsx src/cli.ts describe website-links-ai-digest
 ```
 
-The current catalog includes 83 scrapers:
+The current catalogue includes 84 scrapers:
 
-- 17 news scrapers
+- 18 news scrapers
 - 3 weather scrapers
 - 17 report/public-data scrapers
 - 46 academic scrapers
@@ -58,6 +58,7 @@ The current catalog includes 83 scrapers:
 ```bash
 npx tsx src/cli.ts run bbc-world-news --limit 5
 npx tsx src/cli.ts run open-meteo-air-quality --limit 6 --output output/air-quality.json --save-format all
+npx tsx src/cli.ts run reddit-random-subreddit-image --param subreddit=wallpapers --limit 1
 ```
 
 ## Run batches
@@ -131,7 +132,7 @@ node dist/cli.js list
 ```js
 import { getScraperCatalog, runScraperById } from "open-scrapers-toolkit";
 
-const catalog = getScraperCatalog({
+const catalogue = getScraperCatalog({
   category: "news",
   search: "bbc",
 });
@@ -160,7 +161,16 @@ const messages = resultToDiscordMessages(result, {
 
 For a full starter bot example, see `examples/discord-bots/discordjs-message-command.mjs`.
 
+For subreddit image and scheduled weather examples, see:
+
+- `examples/discord-bots/discordjs-subreddit-image-command.mjs`
+- `examples/automation/discord-weather-scheduler.mjs`
+
+If you want channel-level NSFW safety for image commands, set `DISCORD_ALLOWED_NSFW_CHANNEL_IDS` and use `buildDiscordChannelContext()` from the Discord helper exports.
+
 For the full programmatic API guide, see [library-usage.md](library-usage.md).
+
+For a detailed function-by-function breakdown of the exported helpers, see [api-reference.md](api-reference.md).
 
 For automation, webhook, and publisher examples, see [automation.md](automation.md).
 

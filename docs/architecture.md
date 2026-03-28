@@ -5,11 +5,13 @@ The repository is intentionally modular so we can keep adding scrapers without d
 ## Core pieces
 
 - `src/cli.ts`: command-line entry point and orchestration
-- `src/core/catalog.ts`: shared catalog filtering and metadata formatting
+- `src/core/catalog.ts`: shared catalogue filtering and metadata formatting
 - `src/core/cache.ts`: optional response caching for library and CLI workflows
 - `src/core/types.ts`: shared TypeScript interfaces
 - `src/core/http.ts`: polite HTTP helpers with timeout, retry, and backoff handling
+- `src/core/reddit.ts`: Reddit OAuth token handling and random subreddit image selection
 - `src/core/rss.ts`: RSS and Atom parsing
+- `src/core/weather.ts`: Open-Meteo weather-code interpretation used by the Discord weather cards
 - `src/core/html.ts`: readable webpage extraction for the bulk-link scraper
 - `src/core/ai.ts`: optional OpenAI enrichment helper
 - `src/core/factories.ts`: reusable scraper factories for feed and API patterns
@@ -21,17 +23,17 @@ The repository is intentionally modular so we can keep adding scrapers without d
 - `src/publishers.ts`: generic webhook publishing, snapshots, and filtered health-alert helpers
 - `src/index.ts`: package entry point for library consumers
 - `src/scrapers/`: scraper modules and topic-pack collections
-- `test/`: automated tests for CLI behavior, library exports, Discord formatting, outputs, helpers, and link ingestion
+- `test/`: automated tests for CLI behaviour, library exports, Discord formatting, outputs, helpers, and link ingestion
 
 ## Data flow
 
-1. The CLI selects or filters scrapers from the catalog.
+1. The CLI selects or filters scrapers from the catalogue.
 2. The CLI builds a `ScraperContext` with a limit, output directory, parameters, user agent, and timestamp.
 3. The scraper fetches a public endpoint or a user-supplied webpage.
-4. Source-specific logic normalizes data into shared `records`.
+4. Source-specific logic normalises data into shared `records`.
 5. The CLI or library layer prints a preview, saves exports, builds a health report, or publishes the result elsewhere.
 
-## Normalized result shape
+## Normalised Result Shape
 
 Every scraper returns:
 
@@ -58,9 +60,9 @@ Current factory coverage:
 - World Bank indicator API
 - World Bank document search API
 
-Large catalog expansions can bundle related definitions into topic-pack modules so dozens of very similar scrapers do not duplicate the same plumbing.
+Large catalogue expansions can bundle related definitions into topic-pack modules so dozens of very similar scrapers do not duplicate the same plumbing.
 
-Sources such as Open-Meteo, NWS, USGS, and the bulk-link scraper use dedicated modules because their payloads or extraction logic are more specialized.
+Sources such as Open-Meteo, NWS, USGS, and the bulk-link scraper use dedicated modules because their payloads or extraction logic are more specialised.
 
 ## Quality and automation
 

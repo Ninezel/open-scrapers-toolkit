@@ -1,15 +1,15 @@
-# Scraper Catalog
+# Scraper Catalogue
 
-This page explains what each scraper family is for, which parameters it accepts, and how to choose the right scraper for a job. The toolkit now ships with 83 scrapers.
+This page explains what each scraper family is for, which parameters it accepts, and how to choose the right scraper for a job. The toolkit now ships with 84 scrapers.
 
-## Catalog totals
+## Catalogue Totals
 
-- `news`: 17
+- `news`: 18
 - `weather`: 3
 - `reports`: 17
 - `academic`: 46
 
-## How to inspect the catalog live
+## How to Inspect the Catalogue Live
 
 Use the CLI when you want the current metadata:
 
@@ -37,6 +37,8 @@ npx tsx src/cli.ts describe website-links-ai-digest
   Topic feeds from UN News covering climate change, health, human rights, peace and security, women, migrants and refugees, humanitarian aid, and the SDGs. No extra parameters.
 - `who-afro-*`
   WHO AFRO featured news, emergencies, and speeches. No extra parameters.
+- `reddit-random-subreddit-image`
+  Pulls a random image post from a subreddit. Required parameter: `subreddit`. Optional parameters: `sort`, `timeWindow`, `allowNsfw`, `sampleSize`. Requires Reddit OAuth credentials.
 - `nature-*`
   Nature topic feeds live in the academic category, but they behave like fast-moving feed scrapers with no extra parameters.
 
@@ -115,7 +117,7 @@ npx tsx src/cli.ts describe website-links-ai-digest
 
 ## Topic-pack note
 
-The larger source families are intentionally grouped into topic-pack modules so we can add many closely related scrapers without turning the repo into 83 fully independent one-off files. Use `describe <scraper-id>` when you want the exact defaults and parameters for one entry.
+The larger source families are intentionally grouped into topic-pack modules so we can add many closely related scrapers without turning the repo into 84 fully independent one-off files. Use `describe <scraper-id>` when you want the exact defaults and parameters for one entry.
 
 ## Common parameter examples
 
