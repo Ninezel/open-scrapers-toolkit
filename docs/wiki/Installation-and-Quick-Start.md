@@ -13,6 +13,12 @@ Install for app or bot usage:
 npm install github:Ninezel/open-scrapers-toolkit
 ```
 
+Detailed follow-up pages:
+
+- [Library Usage](Library-Usage)
+- [Scraper Catalog](Scraper-Catalog)
+- [Roadmap](Roadmap)
+
 Bulk-link example:
 
 ```bash

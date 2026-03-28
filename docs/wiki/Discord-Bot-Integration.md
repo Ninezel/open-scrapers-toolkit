@@ -48,3 +48,9 @@ Starter file:
 - `examples/discord-bots/discordjs-message-command.mjs`
 
 Keep bot limits polite and pass a contact email where possible.
+
+Related pages:
+
+- [Library Usage](Library-Usage)
+- [Scraper Catalog](Scraper-Catalog)
+- [Roadmap](Roadmap)

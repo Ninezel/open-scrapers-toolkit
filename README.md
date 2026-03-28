@@ -257,12 +257,24 @@ npm run test:live
 
 - [Getting started](docs/getting-started.md)
 - [Architecture](docs/architecture.md)
+- [Library usage](docs/library-usage.md)
 - [Discord bot integration](docs/discord-bots.md)
 - [Scraper catalog](docs/scraper-catalog.md)
 - [Adding a scraper](docs/adding-a-scraper.md)
 - [Compliance and ethics](docs/compliance.md)
 - [Roadmap](docs/roadmap.md)
 - [Release workflow](docs/release-workflow.md)
+
+## Next roadmap focus
+
+Current next-step priorities for the toolkit are:
+
+- add another wave of official and public-interest sources such as WHO, UN, OECD, and more hazard datasets
+- strengthen the reusable library surface with cache, retry, and publisher helpers
+- add health alert publishing so failed sources can be surfaced to bots, dashboards, or maintainers automatically
+- improve contributor workflows with more fixtures, templates, and source-specific test coverage
+
+The full planning notes live in [docs/roadmap.md](docs/roadmap.md).
 
 ## Open-source standards
 

@@ -16,6 +16,10 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 - Extended the toolkit so Discord bots and other Node applications can import scraper runners directly instead of shelling out to the CLI.
 
+### Documentation And Roadmap Workflow
+
+- Expanded the docs and wiki so library usage, scraper usage, and the next roadmap priorities are easier to understand and maintain.
+
 ### Added
 
 - Added 13 new scrapers, growing the starter catalog to 28 modules across news, weather, reports, academic sources, and a new file-based bulk website workflow.
@@ -31,6 +35,7 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 - Added `src/library.ts`, `src/index.ts`, and `src/integrations/discord.ts` as the library-facing integration layer.
 - Added Discord bot starter documentation and the `examples/discord-bots/discordjs-message-command.mjs` example.
 - Added library and Discord formatter tests.
+- Added detailed library usage documentation and richer scraper-usage guidance.
 
 ### Changed
 
@@ -38,6 +43,7 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 - Improved catalog output so the growing scraper list remains discoverable.
 - Updated README, docs, and wiki content to reflect the larger catalog and new workflows.
 - Updated package exports, type declarations, and Git install behavior so the toolkit can be consumed as a library from GitHub.
+- Expanded the roadmap into concrete next priorities around source growth, library helpers, reliability, and ecosystem support.
 
 ### Maintenance
 

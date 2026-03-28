@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide walks through installing the toolkit, exploring the catalog, running scrapers, exporting results, and using the file-based website link workflow.
+This guide walks through installing the toolkit, exploring the catalog, running scrapers, using the TypeScript library exports, exporting results, and working with the file-based website link workflow.
 
 ## Requirements
 
@@ -19,6 +19,22 @@ If you want to embed the toolkit inside a Discord bot or another Node applicatio
 ```bash
 npm install github:Ninezel/open-scrapers-toolkit
 ```
+
+## Choose your workflow
+
+Use the CLI when you want:
+
+- quick local runs
+- saved output files
+- batch jobs from the terminal or GitHub Actions
+- health reports and export conversions
+
+Use the library when you want:
+
+- Discord bots or chat commands
+- a web app or API server that calls scrapers on demand
+- your own scheduler, queue, or webhook publisher
+- direct access to normalized result objects in code
 
 ## Inspect the catalog
 
@@ -98,6 +114,22 @@ npm run build
 node dist/cli.js list
 ```
 
+## Use the library in code
+
+```js
+import { getScraperCatalog, runScraperById } from "open-scrapers-toolkit";
+
+const catalog = getScraperCatalog({
+  category: "news",
+  search: "bbc",
+});
+
+const result = await runScraperById("bbc-world-news", {
+  contactEmail: "bot@example.com",
+  limit: 3,
+});
+```
+
 ## Use it in a Discord bot
 
 ```js
@@ -115,6 +147,8 @@ const messages = resultToDiscordMessages(result, {
 ```
 
 For a full starter bot example, see `examples/discord-bots/discordjs-message-command.mjs`.
+
+For the full programmatic API guide, see [library-usage.md](library-usage.md).
 
 ## Validation
 

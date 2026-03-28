@@ -1,35 +1,62 @@
 # Roadmap
 
-This repository is intended to become a broad open-source scraper collection rather than a one-off code dump.
+This repository is intended to become a broad open-source scraper toolkit and library rather than a one-off pile of scripts.
 
-## Completed in this expansion
+## Completed so far
 
-- added another 13 scrapers, pushing the starter catalog to 28 modules
+- grew the starter catalog to 28 scrapers
 - added CSV and NDJSON exports
 - added Docker packaging
 - added scheduled source-health automation
 - added optional AI-assisted bulk website link scraping
-- added broader test coverage, including export tests and file-based link scraping tests
+- added a reusable TypeScript library surface for apps and Discord bots
+- added a Discord formatter layer and starter bot examples
 
-## Next expansion areas
+## Next roadmap priorities
 
-- more official government feeds
-- health-agency report sources
-- NGO and humanitarian situation-report feeds
-- more environment and climate APIs
-- stronger desktop dashboards in the companion app
-- more live-source smoke coverage
-- optional alerting/report publishing around health checks
+## 1. Catalog growth
 
-## Suggested next scrapers
+- add another 10 to 15 public-interest sources
+- expand official sources in health, environment, disaster response, and policy research
+- add more geographic coverage instead of relying on only a few English-language sources
 
-- WHO public news or publications feeds
+Current target sources:
+
+- WHO news and publication feeds
 - UN News topic feeds
-- OECD publications or data feeds
-- Relief-style humanitarian updates
-- journal TOC feeds
-- additional public weather and hazard datasets
+- OECD publications and datasets
+- humanitarian situation-report sources
+- more hazard and climate datasets
+- journal table-of-contents feeds
+
+## 2. Library improvements
+
+- add cache helpers so apps and bots can avoid unnecessary repeat requests
+- add retry and backoff options for temporary source failures
+- add publisher helpers for Discord, webhooks, and file snapshots
+- stabilize the public API surface for future npm publishing beyond GitHub installs
+
+## 3. Operations and reliability
+
+- extend health checks with alert publishing
+- add richer live-source smoke coverage
+- improve error classification so users can distinguish source issues from local setup issues
+- add more regression fixtures for parsers and normalizers
+
+## 4. Contributor experience
+
+- add more scraper templates and contribution examples
+- add source-specific troubleshooting notes
+- document testing patterns for feed, API, and webpage scrapers
+- keep docs and wiki examples aligned with the shipped CLI and library surface
+
+## 5. Ecosystem support
+
+- deepen the Discord bot examples
+- add webhook publishing recipes
+- add more examples for cron jobs, GitHub Actions, and self-hosted schedulers
+- keep the desktop companion aligned with the toolkit feature set
 
 ## Contribution goal
 
-Keep growing the catalog without turning the repo into a pile of custom scripts. Shared helpers, clear docs, and responsible-source rules are what make that possible.
+Keep growing the catalog without turning the repo into custom-script sprawl. Shared helpers, clear documentation, stable normalized outputs, and responsible-source rules are what make that possible.

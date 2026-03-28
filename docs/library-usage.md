@@ -1,0 +1,198 @@
+# Library Usage
+
+Open Scrapers Toolkit can be used as a CLI, but it is also a reusable TypeScript library for bots, apps, dashboards, and automation workers.
+
+## Install options
+
+Install from the GitHub repository:
+
+```bash
+npm install github:Ninezel/open-scrapers-toolkit
+```
+
+Or use a local checkout while developing:
+
+```bash
+npm install
+npm run build
+```
+
+## What the package exports
+
+Root package exports include:
+
+- catalog helpers such as `getScraperCatalog()`
+- registry access through the main library surface
+- runner helpers such as `runScraperById()`
+- health reporting with `runLibraryHealth()`
+- Discord payload formatting helpers such as `resultToDiscordMessages()`
+
+Discord-only subpath:
+
+```js
+import { resultToDiscordMessages, runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
+```
+
+## Typical usage flow
+
+1. Discover a scraper or filter the catalog.
+2. Run one scraper, a category, or a filtered set.
+3. Use the normalized `ScrapeResult` object in your own code.
+4. Optionally render the result to Discord-style message payloads.
+
+## Discover the catalog
+
+```js
+import { getScraperCatalog } from "open-scrapers-toolkit";
+
+const academicClimate = getScraperCatalog({
+  category: "academic",
+  search: "climate",
+});
+```
+
+Each catalog entry includes:
+
+- `id`
+- `name`
+- `category`
+- `description`
+- `homepage`
+- `sourceName`
+- `defaults`
+- `params`
+
+## Run one scraper
+
+```js
+import { runScraperById } from "open-scrapers-toolkit";
+
+const result = await runScraperById("open-meteo-city-forecast", {
+  contactEmail: "team@example.com",
+  limit: 6,
+  params: {
+    latitude: "51.5072",
+    longitude: "-0.1276",
+    label: "London",
+    days: "2",
+  },
+});
+```
+
+Useful options:
+
+- `contactEmail`: helpful identifier for polite requests
+- `limit`: cap the returned records
+- `params`: scraper-specific parameters
+- `outputDir`: useful if your own code also wants file output conventions
+- `userAgent`: override the default user agent if needed
+- `now`: inject a fixed clock during tests
+
+## Run a category or filtered slice
+
+```js
+import { runScrapersByCategory, runScrapersFromCatalog } from "open-scrapers-toolkit";
+
+const weatherResults = await runScrapersByCategory("weather", {
+  limit: 3,
+});
+
+const worldBankResults = await runScrapersFromCatalog({
+  category: "reports",
+  search: "world-bank",
+  limit: 2,
+});
+```
+
+## Run health checks in code
+
+```js
+import { runLibraryHealth } from "open-scrapers-toolkit";
+
+const health = await runLibraryHealth({
+  category: "news",
+});
+```
+
+The returned value is a standard `ScrapeResult`, so you can store it, publish it, or transform it like any other scraper result.
+
+## Normalized result shape
+
+Every scraper returns:
+
+```ts
+{
+  scraperId: string;
+  scraperName: string;
+  category: "news" | "weather" | "reports" | "academic";
+  source: string;
+  fetchedAt: string;
+  records: ScrapedRecord[];
+  meta?: Record<string, unknown>;
+}
+```
+
+Each `record` may include:
+
+- `id`
+- `source`
+- `title`
+- `url`
+- `summary`
+- `publishedAt`
+- `authors`
+- `tags`
+- `location`
+- `metadata`
+
+## Discord bot usage
+
+If you want to format a result into Discord-style payloads:
+
+```js
+import { resultToDiscordMessages, runScraperById } from "open-scrapers-toolkit";
+
+const result = await runScraperById("nasa-breaking-news", {
+  contactEmail: "bot@example.com",
+  limit: 2,
+});
+
+const messages = resultToDiscordMessages(result, {
+  maxRecords: 2,
+  maxEmbedsPerMessage: 2,
+  includeMetadata: false,
+});
+```
+
+One-call helper:
+
+```js
+import { runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
+```
+
+Use this when you want a direct scrape-to-message flow inside `discord.js` or a compatible library.
+
+## When to use the CLI instead
+
+Prefer the CLI when you want:
+
+- saved JSON, CSV, or NDJSON output
+- shell automation
+- GitHub Actions jobs
+- ad hoc debugging
+- bulk link ingestion from files
+
+Prefer the library when you want:
+
+- in-process app usage
+- bot commands
+- API endpoints
+- schedulers or queues you already own
+
+## Good usage practices
+
+- Keep per-command limits low in bots.
+- Pass a contact email when you can.
+- Respect source-specific policies and rate limits.
+- Treat AI enrichment as optional convenience, not source truth.
+- Avoid exposing every scraper to every user if your bot serves multiple audiences.
