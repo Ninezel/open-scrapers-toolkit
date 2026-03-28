@@ -15,14 +15,15 @@ npm install github:Ninezel/open-scrapers-toolkit
 - catalogue helpers
 - registry helpers
 - programmatic scraper runners
+- prompt-routing helpers
 - Discord message/embed formatters
 - Discord webhook publishing helpers
 - Discord channel-safety, channel-policy, and schedule helpers
 
 ## Typical flow
 
-1. Run a scraper by ID with `runScraperById()`
-2. Format the normalised payload with `resultToDiscordMessages()`
+1. Run a scraper by ID with `runScraperById()`, or route a question with `runScraperPromptToDiscordMessages()`
+2. Format or receive the normalised Discord payloads
 3. Send the resulting payloads through your Discord library
 
 ## Safety and presentation
@@ -31,6 +32,7 @@ The Discord helpers now cover:
 
 - NSFW/SFW channel validation
 - channel-policy helpers for explicit NSFW channel allow-lists
+- prompt routing for `/scraper`-style questions
 - image-aware embeds for Reddit and other image-bearing records
 - richer weather cards for forecast, air-quality, and alert scrapers
 - interval helpers and delivery-mode profiles for hourly or every-3-hours posting workflows
@@ -77,9 +79,19 @@ Convenience helper:
 import { runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
 ```
 
+Prompt-driven slash-command helpers:
+
+```js
+import {
+  buildDiscordScraperSlashCommandDefinition,
+  runScraperPromptToDiscordMessages,
+} from "open-scrapers-toolkit/discord";
+```
+
 Starter file:
 
 - `examples/discord-bots/discordjs-message-command.mjs`
+- `examples/discord-bots/discordjs-scraper-slash-command.mjs`
 - `examples/discord-bots/discordjs-subreddit-image-command.mjs`
 
 Reddit image scraper notes:

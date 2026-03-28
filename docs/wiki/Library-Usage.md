@@ -17,6 +17,8 @@ npm install github:Ninezel/open-scrapers-toolkit
 - `getScraperCatalog()`
 - `runScraper()`
 - `runScraperById()`
+- `resolveScraperPrompt()`
+- `runScraperPrompt()`
 - `runScrapersByCategory()`
 - `runScrapersFromCatalog()`
 - `runLibraryHealth()`
@@ -26,10 +28,12 @@ npm install github:Ninezel/open-scrapers-toolkit
 - `publishDiscordWebhookMessages()`
 - `resultToDiscordMessages()`
 - `buildDiscordChannelContext()`
+- `buildDiscordScraperSlashCommandDefinition()`
 - `buildDiscordScheduleProfile()`
 - `buildDiscordScraperChoices()`
 - `nextDiscordScheduledRunAt()`
 - `parseDiscordChannelIdList()`
+- `runScraperPromptToDiscordMessages()`
 - `shouldRunDiscordSchedule()`
 - `selectWeatherCadenceRecords()`
 - `fetchRandomSubredditImageRecords()`
@@ -51,6 +55,7 @@ Discord-focused helpers now cover:
 
 - channel-safety filtering for NSFW-tagged records
 - channel-policy helpers for whitelisting specific NSFW Discord channels
+- prompt routing for natural-language bot questions
 - weather-card formatting with hourly or 3-hour cadence selection
 - schedule helpers for bots that post on an interval
 - random subreddit image fetching for bots with Reddit OAuth credentials
@@ -78,6 +83,17 @@ Useful library options:
 - `retryDelayMs`
 - `contactEmail`
 - `limit`
+
+Prompt-routing example:
+
+```js
+import { runScraperPrompt } from "open-scrapers-toolkit";
+
+const execution = await runScraperPrompt("Give me academic records of Vatican Church", {
+  contactEmail: "bot@example.com",
+  limit: 3,
+});
+```
 - `params`
 - `outputDir`
 

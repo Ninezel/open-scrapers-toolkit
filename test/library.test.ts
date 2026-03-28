@@ -89,6 +89,12 @@ test("getScraperCatalog can be filtered for bot-friendly discovery", () => {
   assert.equal(catalog[0]?.id, "bbc-science-environment-news");
 });
 
+test("getScraperCatalog now exposes the expanded 180-plus scraper catalogue", () => {
+  const catalog = getScraperCatalog();
+
+  assert.ok(catalog.length >= 188);
+});
+
 test("runScraperById rejects unknown scraper ids", async () => {
   await assert.rejects(
     () => runScraperById("does-not-exist"),

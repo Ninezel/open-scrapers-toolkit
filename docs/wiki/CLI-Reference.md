@@ -5,6 +5,8 @@ Core commands:
 ```bash
 npx tsx src/cli.ts list --category weather --search forecast
 npx tsx src/cli.ts describe website-links-ai-digest
+npx tsx src/cli.ts ask "What is the weather in London"
+npx tsx src/cli.ts ask "Give me academic records of Vatican Church" --resolve-only
 npx tsx src/cli.ts run bbc-business-news --limit 5 --output output/bbc-business-news.json
 npx tsx src/cli.ts run-all --category academic --limit 3 --out-dir output/academic --save-format csv
 npx tsx src/cli.ts scrape-links examples/url-lists/demo-links.txt --limit 3 --output output/links-digest.json
@@ -13,6 +15,8 @@ npx tsx src/cli.ts export output/bbc-business-news.json --format all --output ou
 ```
 
 `--save-format` accepts `json`, `csv`, `ndjson`, or `all`.
+
+`ask` is the prompt-routing test command. Use it when you want to check how the natural-language router would resolve a request before you wire it into a bot.
 
 Programmatic usage for apps and Discord bots is covered separately in [Discord Bot Integration](Discord-Bot-Integration).
 

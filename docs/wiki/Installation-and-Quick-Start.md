@@ -3,6 +3,7 @@
 ```bash
 npm install
 npx tsx src/cli.ts list
+npx tsx src/cli.ts ask "What is the weather in London"
 npx tsx src/cli.ts run nasa-breaking-news --limit 5
 npx tsx src/cli.ts health --format table
 ```
@@ -11,11 +12,11 @@ The CLI auto-loads a repo-root `.env` file through `dotenv`. Copy `.env.example`
 
 Current catalogue size:
 
-- 84 scrapers total
+- 188 scrapers total
 - 18 news
 - 3 weather
-- 17 reports
-- 46 academic
+- 43 reports
+- 124 academic
 
 Install for app or bot usage:
 
@@ -28,6 +29,7 @@ Detailed follow-up pages:
 - [Environment Variables](Environment-Variables)
 - [Library Usage](Library-Usage)
 - [API Reference](API-Reference)
+- [Prompt Routing](Prompt-Routing)
 - [Discord Bot Integration](Discord-Bot-Integration)
 - [Scraper Catalogue](Scraper-Catalog)
 - [Roadmap](Roadmap)
@@ -41,6 +43,7 @@ npx tsx src/cli.ts scrape-links examples/url-lists/demo-links.txt --output outpu
 Discord examples:
 
 - `examples/discord-bots/discordjs-message-command.mjs`
+- `examples/discord-bots/discordjs-scraper-slash-command.mjs`
 - `examples/discord-bots/discordjs-subreddit-image-command.mjs`
 - `examples/automation/discord-weather-scheduler.mjs`
 

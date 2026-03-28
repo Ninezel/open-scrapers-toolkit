@@ -3,6 +3,11 @@ import { describeOpenMeteoWeather } from "../core/weather.js";
 import { splitCommaList, truncateText, uniqueStrings } from "../core/utils.js";
 import type { LibraryContextOptions } from "../library.js";
 import { getScraperCatalog, runScraperById } from "../library.js";
+import {
+  runScraperPrompt,
+  type ScraperPromptResolution,
+  type ScraperPromptResolveOptions,
+} from "../prompt-router.js";
 import { postJsonWebhook, type PublishResponse } from "../publishers.js";
 
 /** One field inside a Discord embed payload. */
@@ -41,6 +46,27 @@ export interface DiscordEmbedShape {
 export interface DiscordMessagePayload {
   content?: string;
   embeds: DiscordEmbedShape[];
+}
+
+/** Plain-object slash-command option shape that bot authors can register directly. */
+export interface DiscordSlashCommandOptionShape {
+  description: string;
+  max_length?: number;
+  max_value?: number;
+  min_length?: number;
+  min_value?: number;
+  name: string;
+  required?: boolean;
+  type: 3 | 4;
+}
+
+/** Plain-object slash-command definition compatible with the Discord API. */
+export interface DiscordSlashCommandDefinition {
+  description: string;
+  dm_permission?: boolean;
+  name: string;
+  options: DiscordSlashCommandOptionShape[];
+  type?: 1;
 }
 
 /** Channel-specific safety state used when filtering NSFW content. */
@@ -118,6 +144,18 @@ export interface DiscordRenderOptions {
 
 /** Combined scraper-runner and Discord-render options. */
 export interface DiscordRunOptions extends LibraryContextOptions, DiscordRenderOptions {}
+
+/** Combined prompt-router and Discord-render options for `/scraper` style flows. */
+export interface DiscordPromptRunOptions
+  extends DiscordRunOptions,
+    ScraperPromptResolveOptions {}
+
+/** Full output of a prompt-based Discord helper call. */
+export interface DiscordPromptMessageResult {
+  messages: DiscordMessagePayload[];
+  resolution: ScraperPromptResolution;
+  result: ScrapeResult;
+}
 
 function numberFromUnknown(value: unknown): number | undefined {
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -858,6 +896,53 @@ export function buildDiscordScraperChoices(options: {
     }));
 }
 
+/**
+ * Builds a simple `/scraper` slash-command definition that bot authors can
+ * register without pulling in framework-specific builder classes.
+ */
+export function buildDiscordScraperSlashCommandDefinition(options: {
+  commandName?: string;
+  description?: string;
+  includeLimitOption?: boolean;
+  questionDescription?: string;
+  questionName?: string;
+} = {}): DiscordSlashCommandDefinition {
+  const questionName = options.questionName?.trim() || "question";
+
+  return {
+    description:
+      options.description?.trim() ||
+      "Ask the scraper toolkit for weather, research, reports, news, or images.",
+    dm_permission: true,
+    name: options.commandName?.trim() || "scraper",
+    options: [
+      {
+        description:
+          options.questionDescription?.trim() ||
+          "Natural-language request, for example weather in London or academic records of Vatican Church.",
+        max_length: 200,
+        min_length: 2,
+        name: questionName,
+        required: true,
+        type: 3,
+      },
+      ...(options.includeLimitOption === false
+        ? []
+        : [
+            {
+              description: "Optional maximum number of records to show.",
+              max_value: 10,
+              min_value: 1,
+              name: "limit",
+              required: false,
+              type: 4 as const,
+            },
+          ]),
+    ],
+    type: 1,
+  };
+}
+
 /** Formats one normalised record as one Discord embed. */
 export function recordToDiscordEmbed(
   result: ScrapeResult,
@@ -970,6 +1055,27 @@ export async function runScraperToDiscordMessages(
 ): Promise<DiscordMessagePayload[]> {
   const result = await runScraperById(scraperId, options);
   return resultToDiscordMessages(result, options);
+}
+
+/**
+ * Resolves a free-text prompt such as "What is the weather in London", runs
+ * the chosen scraper, and returns Discord-ready payloads plus routing metadata.
+ */
+export async function runScraperPromptToDiscordMessages(
+  prompt: string,
+  options: DiscordPromptRunOptions = {},
+): Promise<DiscordPromptMessageResult> {
+  const { resolution, result } = await runScraperPrompt(prompt, options);
+  const messages = resultToDiscordMessages(result, {
+    ...options,
+    style: options.style ?? resolution.renderStyle,
+  });
+
+  return {
+    messages,
+    resolution,
+    result,
+  };
 }
 
 /** Publishes Discord-formatted messages to a Discord-compatible webhook. */

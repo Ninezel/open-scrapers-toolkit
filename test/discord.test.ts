@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  buildDiscordScraperSlashCommandDefinition,
   buildDiscordChannelContext,
   buildDiscordScraperChoices,
   buildDiscordScheduleProfile,
   nextDiscordScheduledRunAt,
   parseDiscordChannelIdList,
+  runScraperPromptToDiscordMessages,
   shouldRunDiscordSchedule,
   recordToDiscordEmbed,
   resultToDiscordMessages,
@@ -290,4 +292,25 @@ test("buildDiscordScraperChoices creates slash-command friendly choices", () => 
   assert.ok(choices.length > 0);
   assert.ok(choices.length <= 5);
   assert.ok(choices.every((choice) => choice.name.length <= 100));
+});
+
+test("buildDiscordScraperSlashCommandDefinition returns a clean Discord API payload", () => {
+  const command = buildDiscordScraperSlashCommandDefinition();
+
+  assert.equal(command.name, "scraper");
+  assert.equal(command.type, 1);
+  assert.equal(command.options[0]?.name, "question");
+  assert.equal(command.options[0]?.type, 3);
+  assert.equal(command.options[1]?.name, "limit");
+  assert.equal(command.options[1]?.type, 4);
+});
+
+test("runScraperPromptToDiscordMessages resolves a prompt and formats Discord payloads", async () => {
+  const execution = await runScraperPromptToDiscordMessages("Show me BBC world news", {
+    limit: 1,
+  });
+
+  assert.equal(execution.resolution.scraperId, "bbc-world-news");
+  assert.equal(execution.messages.length, 1);
+  assert.equal(execution.messages[0]?.embeds.length, 1);
 });

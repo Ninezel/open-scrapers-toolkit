@@ -38,6 +38,9 @@ Testing:
 Discord examples:
 
 - `DISCORD_TOKEN`
+- `DISCORD_APPLICATION_ID`
+- `DISCORD_GUILD_ID`
+- `DISCORD_COMMAND_NAME`
 - `DISCORD_PREFIX`
 - `DISCORD_ALLOWED_NSFW_CHANNEL_IDS`
 - `DISCORD_WEATHER_MODE`
@@ -45,6 +48,8 @@ Discord examples:
 - `DISCORD_WEATHER_LAST_RUN_AT`
 - `DISCORD_WEBHOOK_URL`
 - `RESULT_WEBHOOK_URL`
+
+The slash-command example uses `DISCORD_TOKEN`, `DISCORD_APPLICATION_ID`, `DISCORD_GUILD_ID`, and optionally `DISCORD_COMMAND_NAME`.
 
 Use `RUN_LIVE_TESTS=1` only when you want `npm run test:live` to hit upstream sources.
 

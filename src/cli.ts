@@ -27,6 +27,7 @@ import { getAllScrapers, getScraperById } from "./core/registry.js";
 import type { ScrapeResult, ScraperContext, ScraperDefinition } from "./core/types.js";
 import { parseKeyValuePairs } from "./core/utils.js";
 import { publishDiscordWebhookMessages } from "./integrations/discord.js";
+import { resolveScraperPrompt, runScraperPrompt } from "./prompt-router.js";
 import { resolveHttpRetryCount, resolveHttpRetryDelayMs } from "./core/http.js";
 
 loadEnv();
@@ -221,6 +222,65 @@ async function runSingleScraper(
   }
 
   await saveIfRequested(result, options, defaultOutputPath(context.outputDir, result));
+}
+
+async function runPromptQuestion(
+  question: string,
+  options: SharedRunOptions & {
+    resolveOnly?: boolean;
+  },
+): Promise<void> {
+  const params = parseKeyValuePairs(options.param ?? []);
+  const promptOptions = {
+    cacheTtlMs: resolveCacheTtlMs(),
+    contactEmail: process.env.SCRAPERS_CONTACT_EMAIL,
+    limit: normalizeLimit(options.limit),
+    outputDir: options.outDir ?? process.env.SCRAPERS_OUTPUT_DIR ?? "output",
+    params,
+    retryCount: resolveHttpRetryCount(),
+    retryDelayMs: resolveHttpRetryDelayMs(),
+    userAgent: buildUserAgent(),
+  };
+  const resolvedOnly = options.resolveOnly === true;
+
+  if (resolvedOnly) {
+    const resolution = await resolveScraperPrompt(question, promptOptions);
+
+    console.log(JSON.stringify(resolution, null, 2));
+    return;
+  }
+
+  const { resolution, result } = await runScraperPrompt(question, promptOptions);
+  const format = options.format ?? "pretty";
+
+  if (format === "json") {
+    console.log(
+      JSON.stringify(
+        {
+          resolution,
+          result,
+        },
+        null,
+        2,
+      ),
+    );
+  } else {
+    console.log(`Prompt: ${question}`);
+    console.log(
+      `Resolved to ${resolution.scraperId} [${resolution.category}] with ${resolution.confidence} confidence.`,
+    );
+    console.log(resolution.reason);
+
+    if (Object.keys(resolution.params).length > 0) {
+      console.log(`Params: ${JSON.stringify(resolution.params)}`);
+    }
+
+    console.log("");
+    printResultSummary(result);
+  }
+
+  const outputDir = options.outDir ?? process.env.SCRAPERS_OUTPUT_DIR ?? "output";
+  await saveIfRequested(result, options, defaultOutputPath(outputDir, result));
 }
 
 async function runAllScrapers(options: {
@@ -448,6 +508,26 @@ program
     }
 
     await runSingleScraper(scraper, options);
+  });
+
+program
+  .command("ask")
+  .argument("<question>", "Natural-language question or instruction.")
+  .description(
+    "Resolve a free-text prompt into the most suitable scraper and run it.",
+  )
+  .option("-l, --limit <number>", "Maximum number of records to collect.", "5")
+  .option("--out-dir <directory>", "Output directory for saved results.")
+  .option("--output <file>", "Optional file path used when saving the result.")
+  .option("--format <pretty|json>", "Console output format.", "pretty")
+  .option("--resolve-only", "Only print the routing decision without running the scraper.")
+  .option(
+    "--save-format <json|csv|ndjson|all>",
+    "Optional saved export format when --output is supplied.",
+  )
+  .option("-p, --param <key=value>", "Additional scraper parameter.", collect, [])
+  .action(async (question, options) => {
+    await runPromptQuestion(question, options);
   });
 
 program

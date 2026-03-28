@@ -23,7 +23,9 @@ Typical root import:
 ```js
 import {
   getScraperCatalog,
+  resolveScraperPrompt,
   runScraperById,
+  runScraperPrompt,
   resultToDiscordMessages,
 } from "open-scrapers-toolkit";
 ```
@@ -31,7 +33,11 @@ import {
 Discord-only subpath:
 
 ```js
-import { runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
+import {
+  buildDiscordScraperSlashCommandDefinition,
+  runScraperPromptToDiscordMessages,
+  runScraperToDiscordMessages,
+} from "open-scrapers-toolkit/discord";
 ```
 
 ## Most common bot workflow
@@ -42,6 +48,8 @@ For most Discord bots, the normal flow is:
 2. Call `runScraperById()` with `contactEmail`, `limit`, and any scraper `params`.
 3. If the result is going into Discord, call `resultToDiscordMessages()`.
 4. Reply with each returned message payload in your Discord library.
+
+If you want a natural-language `/scraper` flow, swap steps 1 and 2 for `runScraperPromptToDiscordMessages()`.
 
 Example:
 
@@ -116,6 +124,15 @@ Extra fields:
   Filters the catalogue to a single category such as `news`, `weather`, `reports`, or `academic`.
 - `search`
   Filters the catalogue by text before execution.
+
+### `ScraperPromptResolveOptions`
+
+Used by `resolveScraperPrompt()` and `runScraperPrompt()`.
+
+Extra fields:
+
+- `locationResolver`
+  Optional override for location lookup during weather and air-quality prompts.
 
 ### `DiscordRenderOptions`
 
@@ -296,6 +313,70 @@ Best for:
 Returns:
 
 - a `ScrapeResult` where each record describes a scraper health outcome
+
+## Prompt-router helpers
+
+### `resolveScraperPrompt(prompt, options?)`
+
+Purpose:
+
+- interpret a natural-language request
+- choose the most suitable scraper
+- generate useful params such as query text or geocoded weather coordinates
+
+Best for:
+
+- `/scraper` slash commands
+- prompt-driven bots
+- bot help and preview flows
+
+Returns:
+
+- `ScraperPromptResolution` with:
+  - `scraperId`
+  - `category`
+  - `intent`
+  - `confidence`
+  - `params`
+  - `queryText`
+  - `reason`
+  - optional `renderStyle`
+
+Current built-in prompt coverage:
+
+- weather and air quality
+- weather alerts
+- earthquakes
+- academic search
+- report/document search
+- subreddit image requests
+- named-source catalogue matching
+
+### `runScraperPrompt(prompt, options?)`
+
+Purpose:
+
+- resolve a natural-language prompt and immediately run the scraper
+
+Best for:
+
+- app flows that want the router and result together
+- bot command handlers that still want the raw `ScrapeResult`
+
+Returns:
+
+- `ScraperPromptRunResult` with `resolution` and `result`
+
+### `resolveOpenMeteoLocation(context, query)`
+
+Purpose:
+
+- geocode a place name into Open-Meteo-ready coordinates
+
+Best for:
+
+- advanced custom weather flows
+- testing or extending the prompt router
 
 ## Publisher helpers
 
@@ -604,6 +685,26 @@ Returns:
 
 - an array of `{ name, value }`
 
+### `buildDiscordScraperSlashCommandDefinition(options?)`
+
+Purpose:
+
+- build a plain-object Discord slash-command definition for `/scraper`
+
+Best for:
+
+- bots that register commands through the Discord REST API
+- teams who do not want framework-specific builder dependencies in their core setup
+
+Returns:
+
+- `DiscordSlashCommandDefinition`
+
+Default options include:
+
+- required `question` string option
+- optional `limit` integer option
+
 ### `recordToDiscordEmbed(result, record, options?)`
 
 Purpose:
@@ -664,6 +765,25 @@ Returns:
 
 - `DiscordMessagePayload[]`
 
+### `runScraperPromptToDiscordMessages(prompt, options?)`
+
+Purpose:
+
+- resolve a natural-language prompt, run the chosen scraper, and format the result for Discord in one call
+
+Best for:
+
+- `/scraper` slash commands
+- natural-language bot prompts
+- friendly command workflows where users should not need scraper IDs
+
+Returns:
+
+- `DiscordPromptMessageResult` with:
+  - `resolution`
+  - `result`
+  - `messages`
+
 ### `publishDiscordWebhookMessages(webhookUrl, result, options?)`
 
 Purpose:
@@ -685,10 +805,14 @@ Returns:
 Use:
 
 - `runScraperById()` when you know exactly which scraper to run
+- `resolveScraperPrompt()` when you want to inspect how the router understood a user prompt
+- `runScraperPrompt()` when you want natural-language routing plus the raw result
 - `getScraperCatalog()` when users need to discover or choose scrapers
 - `resultToDiscordMessages()` when you already have a result and want Discord output
 - `runScraperToDiscordMessages()` when you want a one-call bot flow
+- `runScraperPromptToDiscordMessages()` when you want a one-call `/scraper` bot flow
 - `buildDiscordChannelContext()` when your bot needs safe NSFW handling
+- `buildDiscordScraperSlashCommandDefinition()` when you want a ready-to-register slash command
 - `buildDiscordScheduleProfile()` when your bot posts on a schedule
 - `publishDiscordWebhookMessages()` when you are posting to Discord webhooks instead of a logged-in bot client
 - `buildHealthAlertResult()` when you only want health failures and skips

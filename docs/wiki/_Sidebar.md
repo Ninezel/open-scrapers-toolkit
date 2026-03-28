@@ -7,6 +7,7 @@ Getting Started
 - [CLI Reference](CLI-Reference)
 - [Library Usage](Library-Usage)
 - [API Reference](API-Reference)
+- [Prompt Routing](Prompt-Routing)
 - [Automation And Publishers](Automation-And-Publishers)
 - [Discord Bot Integration](Discord-Bot-Integration)
 - [Scraper Catalogue](Scraper-Catalog)

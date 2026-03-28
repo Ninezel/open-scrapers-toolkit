@@ -23,7 +23,9 @@ Typical root import:
 ```js
 import {
   getScraperCatalog,
+  resolveScraperPrompt,
   runScraperById,
+  runScraperPrompt,
   resultToDiscordMessages,
 } from "open-scrapers-toolkit";
 ```
@@ -31,7 +33,11 @@ import {
 Discord-only subpath:
 
 ```js
-import { runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
+import {
+  buildDiscordScraperSlashCommandDefinition,
+  runScraperPromptToDiscordMessages,
+  runScraperToDiscordMessages,
+} from "open-scrapers-toolkit/discord";
 ```
 
 ## Most common bot workflow
@@ -42,6 +48,8 @@ For most Discord bots, the normal flow is:
 2. Call `runScraperById()` with `contactEmail`, `limit`, and any scraper `params`.
 3. If the result is going into Discord, call `resultToDiscordMessages()`.
 4. Reply with each returned message payload in your Discord library.
+
+For a natural-language `/scraper` flow, use `runScraperPromptToDiscordMessages()` instead of steps 1 and 2.
 
 Example:
 
@@ -116,6 +124,15 @@ Extra fields:
   Filters the catalogue to a single category such as `news`, `weather`, `reports`, or `academic`.
 - `search`
   Filters the catalogue by text before execution.
+
+### `ScraperPromptResolveOptions`
+
+Used by `resolveScraperPrompt()` and `runScraperPrompt()`.
+
+Extra fields:
+
+- `locationResolver`
+  Optional override for location lookup during weather and air-quality prompts.
 
 ### `DiscordRenderOptions`
 
@@ -219,6 +236,35 @@ Purpose:
 Returns:
 
 - a `ScrapeResult` where each record describes a scraper health outcome
+
+## Prompt-router helpers
+
+### `resolveScraperPrompt(prompt, options?)`
+
+Use this when you want to inspect how a natural-language request would be routed before you run a source.
+
+Returns a `ScraperPromptResolution` with:
+
+- `scraperId`
+- `category`
+- `intent`
+- `confidence`
+- `params`
+- `queryText`
+- `reason`
+
+### `runScraperPrompt(prompt, options?)`
+
+Use this when you want prompt routing plus the normalised scraper result in one call.
+
+Returns:
+
+- `resolution`
+- `result`
+
+### `resolveOpenMeteoLocation(context, query)`
+
+Geocodes a place name into Open-Meteo-ready coordinates. Useful for advanced custom weather flows and for understanding how the built-in prompt router resolves places.
 
 ## Publisher helpers
 
@@ -388,6 +434,18 @@ Purpose:
 Returns:
 
 - an array of `{ name, value }`
+
+### `buildDiscordScraperSlashCommandDefinition(options?)`
+
+Builds a plain-object Discord slash-command definition for `/scraper`.
+
+### `runScraperPromptToDiscordMessages(prompt, options?)`
+
+Runs the natural-language prompt router, executes the chosen scraper, and returns:
+
+- `resolution`
+- `result`
+- `messages`
 
 ### `recordToDiscordEmbed(result, record, options?)`
 

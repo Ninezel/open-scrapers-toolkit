@@ -6,6 +6,7 @@ import {
   parseDiscordChannelIdList,
   resultToDiscordMessages,
   runScraperById,
+  runScraperPromptToDiscordMessages,
 } from "open-scrapers-toolkit";
 
 const token = process.env.DISCORD_TOKEN;
@@ -65,7 +66,7 @@ client.on("messageCreate", async (message) => {
       .join("\n");
 
     await message.reply(
-      `Use \`!scrape <scraper-id> [key=value ...]\`, for example \`!scrape bbc-world-news\` or \`!scrape reddit-random-subreddit-image subreddit=wallpapers\`.\n${suggestions}`,
+      `Use \`!scrape <scraper-id> [key=value ...]\` for direct scraper IDs, or ask a natural-language prompt such as \`!scrape What is the weather in London\`.\n${suggestions}`,
     );
     return;
   }
@@ -74,11 +75,6 @@ client.on("messageCreate", async (message) => {
 
   try {
     const params = parseParams(paramParts);
-    const result = await runScraperById(scraperId, {
-      contactEmail,
-      limit: scraperId === "open-meteo-city-forecast" ? 4 : 3,
-      params,
-    });
     const channel = buildDiscordChannelContext(
       {
         id: message.channel?.id,
@@ -89,20 +85,44 @@ client.on("messageCreate", async (message) => {
         nsfwEnabledChannelIds: allowedNsfwChannelIds,
       },
     );
-    const weatherProfile =
-      scraperId === "open-meteo-city-forecast"
-        ? buildDiscordScheduleProfile(weatherMode, {
-            intervalHours: weatherIntervalHours,
-          })
-        : buildDiscordScheduleProfile("on-demand");
-    const messages = resultToDiscordMessages(result, {
-      channel,
-      includeImages: true,
-      maxRecords: 3,
-      maxEmbedsPerMessage: 3,
-      style: "auto",
-      weatherCadenceHours: weatherProfile.weatherCadenceHours,
-    });
+    const directScraper = buildDiscordScraperChoices({
+      maxChoices: 25,
+      search: scraperId,
+    }).find((choice) => choice.value === scraperId);
+    let messages;
+
+    if (directScraper) {
+      const result = await runScraperById(scraperId, {
+        contactEmail,
+        limit: scraperId === "open-meteo-city-forecast" ? 4 : 3,
+        params,
+      });
+      const weatherProfile =
+        scraperId === "open-meteo-city-forecast"
+          ? buildDiscordScheduleProfile(weatherMode, {
+              intervalHours: weatherIntervalHours,
+            })
+          : buildDiscordScheduleProfile("on-demand");
+      messages = resultToDiscordMessages(result, {
+        channel,
+        includeImages: true,
+        maxRecords: 3,
+        maxEmbedsPerMessage: 3,
+        style: "auto",
+        weatherCadenceHours: weatherProfile.weatherCadenceHours,
+      });
+    } else {
+      const execution = await runScraperPromptToDiscordMessages(body, {
+        channel,
+        contactEmail,
+        includeImages: true,
+        limit: 3,
+        maxEmbedsPerMessage: 3,
+        maxRecords: 3,
+        style: "auto",
+      });
+      messages = execution.messages;
+    }
 
     for (const payload of messages) {
       await message.reply(payload);

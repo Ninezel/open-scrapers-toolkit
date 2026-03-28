@@ -44,14 +44,15 @@ Use the library when you want:
 npm run list
 npx tsx src/cli.ts list --category weather --search forecast
 npx tsx src/cli.ts describe website-links-ai-digest
+npx tsx src/cli.ts ask "What is the weather in London"
 ```
 
-The current catalogue includes 84 scrapers:
+The current catalogue includes 188 scrapers:
 
 - 18 news scrapers
 - 3 weather scrapers
-- 17 report/public-data scrapers
-- 46 academic scrapers
+- 43 report/public-data scrapers
+- 124 academic scrapers
 
 ## Run a single scraper
 
@@ -101,6 +102,13 @@ npx tsx src/cli.ts health --category weather --format json --output output/sourc
 npx tsx src/cli.ts health --alert-status error,skipped --alert-file output/source-health-alerts.json
 npx tsx src/cli.ts health --alert-status error --alert-webhook https://example.com/webhook
 npx tsx src/cli.ts health --alert-status error --alert-discord-webhook https://discord.com/api/webhooks/...
+```
+
+## Test the prompt router
+
+```bash
+npx tsx src/cli.ts ask "Give me academic records of Vatican Church"
+npx tsx src/cli.ts ask "Give me academic records of Vatican Church" --resolve-only
 ```
 
 ## Export an existing saved result
@@ -163,6 +171,7 @@ For a full starter bot example, see `examples/discord-bots/discordjs-message-com
 
 For subreddit image and scheduled weather examples, see:
 
+- `examples/discord-bots/discordjs-scraper-slash-command.mjs`
 - `examples/discord-bots/discordjs-subreddit-image-command.mjs`
 - `examples/automation/discord-weather-scheduler.mjs`
 

@@ -1,6 +1,6 @@
 # Open Scrapers Toolkit
 
-Open Scrapers Toolkit is an open-source TypeScript project for collecting structured data from public news feeds, weather services, report APIs, research indexes, and user-supplied website lists. It ships with a reusable scraper framework, a CLI, export tools, health checks, cache and retry helpers, publisher utilities, Docker support, and a starter catalogue of 84 scrapers that people can run, remix, and extend.
+Open Scrapers Toolkit is an open-source TypeScript project for collecting structured data from public news feeds, weather services, report APIs, research indexes, and user-supplied website lists. It ships with a reusable scraper framework, a CLI, export tools, health checks, cache and retry helpers, publisher utilities, Docker support, prompt-routing helpers for apps and bots, and a starter catalogue of 188 scrapers that people can run, remix, and extend.
 
 Desktop companion:
 
@@ -18,8 +18,8 @@ Desktop companion:
 
 ## Current feature set
 
-- 84 starter scrapers across `news`, `weather`, `reports`, and `academic`
-- category breakdown: 18 `news`, 3 `weather`, 17 `reports`, 46 `academic`
+- 188 starter scrapers across `news`, `weather`, `reports`, and `academic`
+- category breakdown: 18 `news`, 3 `weather`, 43 `reports`, 124 `academic`
 - rich catalogue discovery with `list`, `describe`, category filters, and search
 - `run`, `run-all`, and `scrape-links` CLI flows
 - CSV and NDJSON exports in addition to JSON
@@ -30,7 +30,7 @@ Desktop companion:
 - optional OpenAI enrichment for file-based website link scraping
 - programmatic TypeScript library exports for app and bot integrations
 - Discord-friendly message/embed helpers for `discord.js` and compatible libraries
-- Discord helpers for slash-command choices, channel-policy resolution, NSFW/SFW validation, delivery-mode scheduling, and weather-card formatting
+- Discord helpers for slash-command choices, natural-language `/scraper` routing, channel-policy resolution, NSFW/SFW validation, delivery-mode scheduling, and weather-card formatting
 - automation examples for Discord, webhooks, and nightly health checks
 - contributor templates for RSS, JSON API, and webpage scraper modules
 - Docker packaging and a scheduled GitHub Actions health workflow
@@ -44,9 +44,10 @@ The catalogue now spans:
 - Open-Meteo, NWS, and USGS public hazard/weather data
 - World Bank indicators and document searches
 - arXiv, Crossref, Europe PMC, and topic-focused research feeds
+- prompt-friendly academic and report search scrapers
 - file-based public webpage digest workflows
 
-This README keeps the overview readable by showing the main families below. For the full live list of 84 scraper IDs, use `npx tsx src/cli.ts list --format json` or see [docs/scraper-catalog.md](docs/scraper-catalog.md).
+This README keeps the overview readable by showing the main families below. For the full live list of 188 scraper IDs, use `npx tsx src/cli.ts list --format json` or see [docs/scraper-catalog.md](docs/scraper-catalog.md).
 
 News:
 
@@ -98,6 +99,7 @@ Expanded source families:
 - `europepmc-*` topic packs
 - `arxiv-*` topic packs
 - expanded `world-bank-*` document and indicator scrapers
+- generic search scrapers such as `crossref-academic-search`, `europepmc-academic-search`, `arxiv-academic-search`, and `world-bank-document-search`
 
 ## Stack
 
@@ -115,6 +117,7 @@ npm install
 npx tsx src/cli.ts list --category weather --search forecast
 npx tsx src/cli.ts describe website-links-ai-digest
 npx tsx src/cli.ts run bbc-business-news --limit 5
+npx tsx src/cli.ts ask "What is the weather in London"
 npx tsx src/cli.ts run-all --category academic --limit 3 --out-dir output/academic
 ```
 
@@ -149,11 +152,14 @@ import { resultToDiscordMessages } from "open-scrapers-toolkit/discord";
 
 Useful bot-side helpers also include `buildDiscordChannelContext()`, `buildDiscordScheduleProfile()`, and `parseDiscordChannelIdList()` for channel safety rules and hourly or every-3-hours delivery modes.
 
+If you want a single `/scraper` question flow, the toolkit now also exposes `resolveScraperPrompt()`, `runScraperPrompt()`, `runScraperPromptToDiscordMessages()`, and `buildDiscordScraperSlashCommandDefinition()`.
+
 If you want a function-by-function guide for app and bot developers, see [docs/api-reference.md](docs/api-reference.md).
 
 Example bot starter:
 
 - `examples/discord-bots/discordjs-message-command.mjs`
+- `examples/discord-bots/discordjs-scraper-slash-command.mjs`
 - `examples/discord-bots/discordjs-subreddit-image-command.mjs`
 
 Automation and publisher examples:
@@ -219,6 +225,7 @@ Inspect one scraper:
 npx tsx src/cli.ts describe open-meteo-air-quality
 npx tsx src/cli.ts describe reddit-random-subreddit-image
 npx tsx src/cli.ts describe website-links-ai-digest --format json
+npx tsx src/cli.ts ask "Give me academic records of Vatican Church" --resolve-only
 ```
 
 Run one scraper:
@@ -296,6 +303,9 @@ The CLI auto-loads `.env` from the repo root through `dotenv`. Copy `.env.exampl
 - `DEFAULT_WEATHER_LABEL`
 - `RUN_LIVE_TESTS`
 - `DISCORD_TOKEN`
+- `DISCORD_APPLICATION_ID`
+- `DISCORD_GUILD_ID`
+- `DISCORD_COMMAND_NAME`
 - `DISCORD_PREFIX`
 - `DISCORD_ALLOWED_NSFW_CHANNEL_IDS`
 - `DISCORD_WEATHER_MODE`
@@ -338,6 +348,7 @@ npm run test:live
 - [Architecture](docs/architecture.md)
 - [Library usage](docs/library-usage.md)
 - [API reference](docs/api-reference.md)
+- [Prompt routing](docs/prompt-routing.md)
 - [Automation and publishers](docs/automation.md)
 - [Discord bot integration](docs/discord-bots.md)
 - [Scraper catalogue](docs/scraper-catalog.md)
@@ -351,8 +362,8 @@ npm run test:live
 
 Current next-step priorities for the toolkit are:
 
-- add another wave of official and public-interest sources beyond the current 84, with OECD and more humanitarian/hazard coverage still high on the list
-- stabilise the library and publisher surface for apps, bots, and webhook-driven automations
+- keep growing the public-interest catalogue beyond 188 with more humanitarian, hazard, OECD, and policy-research coverage
+- refine the prompt router, slash-command workflow, and bot-side publisher helpers
 - keep improving live-source monitoring, source-specific troubleshooting, and parser regression coverage
 - expand contributor fixtures, templates, and source-family examples so large catalogue growth stays maintainable
 

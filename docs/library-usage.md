@@ -28,6 +28,7 @@ Root package exports include:
 - catalogue helpers such as `getScraperCatalog()`
 - registry access through the main library surface
 - runner helpers such as `runScraperById()`
+- prompt-routing helpers such as `resolveScraperPrompt()` and `runScraperPrompt()`
 - health reporting with `runLibraryHealth()`
 - generic publisher helpers such as `postJsonWebhook()` and `publishResultSnapshot()`
 - Discord publisher helpers such as `publishDiscordWebhookMessages()`
@@ -45,11 +46,13 @@ The root package also re-exports publisher helpers such as `buildHealthAlertResu
 Useful Discord-side helpers now also include:
 
 - `buildDiscordChannelContext()`
+- `buildDiscordScraperSlashCommandDefinition()`
 - `buildDiscordScheduleProfile()`
 - `buildDiscordScraperChoices()`
 - `filterDiscordResultForChannel()`
 - `nextDiscordScheduledRunAt()`
 - `parseDiscordChannelIdList()`
+- `runScraperPromptToDiscordMessages()`
 - `selectWeatherCadenceRecords()`
 - `shouldRunDiscordSchedule()`
 
@@ -110,6 +113,31 @@ Useful options:
 - `retryDelayMs`: backoff base delay for retry attempts
 - `userAgent`: override the default user agent if needed
 - `now`: inject a fixed clock during tests
+
+## Resolve a natural-language prompt
+
+```js
+import { resolveScraperPrompt, runScraperPrompt } from "open-scrapers-toolkit";
+
+const resolution = await resolveScraperPrompt("Give me academic records of Vatican Church");
+
+const execution = await runScraperPrompt("What is the weather in London", {
+  contactEmail: "bot@example.com",
+  limit: 3,
+});
+```
+
+Use `resolveScraperPrompt()` when you want to inspect the routing decision first. Use `runScraperPrompt()` when you want the router and scraper execution in one call.
+
+The router currently covers:
+
+- weather and air quality
+- weather alerts
+- earthquakes
+- academic search
+- report/document search
+- subreddit image requests
+- named-source catalogue matching such as `BBC science news`
 
 ## Run a category or filtered slice
 
@@ -245,6 +273,30 @@ import { runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
 ```
 
 Use this when you want a direct scrape-to-message flow inside `discord.js` or a compatible library.
+
+Natural-language Discord helper:
+
+```js
+import {
+  buildDiscordScraperSlashCommandDefinition,
+  runScraperPromptToDiscordMessages,
+} from "open-scrapers-toolkit/discord";
+
+const command = buildDiscordScraperSlashCommandDefinition();
+
+const execution = await runScraperPromptToDiscordMessages(
+  "What is the weather in London",
+  {
+    contactEmail: "bot@example.com",
+    includeImages: true,
+    limit: 3,
+    maxRecords: 3,
+    style: "auto",
+  },
+);
+```
+
+`execution` includes the prompt `resolution`, the normalised `result`, and the ready-to-send `messages`.
 
 Channel-safety example:
 

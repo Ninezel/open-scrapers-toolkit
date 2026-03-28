@@ -76,6 +76,12 @@ The `reddit-random-subreddit-image` scraper and Reddit image helper functions re
 
 - `DISCORD_TOKEN`
   Bot token used by the `discord.js` examples.
+- `DISCORD_APPLICATION_ID`
+  Application ID used by the slash-command registration example.
+- `DISCORD_GUILD_ID`
+  Guild ID used by the slash-command registration example.
+- `DISCORD_COMMAND_NAME`
+  Optional slash-command name override. Defaults to `scraper`.
 - `DISCORD_PREFIX`
   Prefix used by the starter command examples.
 - `DISCORD_ALLOWED_NSFW_CHANNEL_IDS`
@@ -90,3 +96,5 @@ The `reddit-random-subreddit-image` scraper and Reddit image helper functions re
   Example Discord webhook target used by the Discord publishing examples.
 - `RESULT_WEBHOOK_URL`
   Example generic webhook target used by the generic JSON publishing example.
+
+The new slash-command example in `examples/discord-bots/discordjs-scraper-slash-command.mjs` uses `DISCORD_TOKEN`, `DISCORD_APPLICATION_ID`, `DISCORD_GUILD_ID`, and optionally `DISCORD_COMMAND_NAME`.

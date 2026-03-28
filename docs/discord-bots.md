@@ -27,15 +27,20 @@ Root package exports:
 Discord-specific subpath export:
 
 ```js
-import { resultToDiscordMessages, runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
+import {
+  buildDiscordScraperSlashCommandDefinition,
+  resultToDiscordMessages,
+  runScraperPromptToDiscordMessages,
+  runScraperToDiscordMessages,
+} from "open-scrapers-toolkit/discord";
 ```
 
 ## Typical Discord bot flow
 
-1. Receive a bot command such as `!scrape bbc-world-news`
-2. Call `runScraperById()` with a contact email, limit, and any scraper parameters
-3. Convert the normalised result into Discord payloads with `resultToDiscordMessages()`
-4. Send the payloads with `message.reply()`, `interaction.followUp()`, or the equivalent call in your Discord library
+1. Receive either a direct scraper command such as `!scrape bbc-world-news` or a prompt such as `/scraper What is the weather in London`.
+2. Call `runScraperById()` for exact-ID flows or `runScraperPromptToDiscordMessages()` for prompt-based flows.
+3. Let the Discord helper layer format the result into ready-to-send payloads.
+4. Send the payloads with `message.reply()`, `interaction.editReply()`, `interaction.followUp()`, or the equivalent call in your Discord library.
 
 ## Basic example
 
@@ -105,6 +110,67 @@ const result = await runScraperById("un-news-health", {
 
 await publishDiscordWebhookMessages("https://discord.com/api/webhooks/...", result);
 ```
+
+## Slash-command flow
+
+For bot authors who want a user-facing `/scraper` command, the toolkit now ships a prompt router and a plain-object slash-command definition builder.
+
+```js
+import {
+  buildDiscordChannelContext,
+  buildDiscordScraperSlashCommandDefinition,
+  parseDiscordChannelIdList,
+  runScraperPromptToDiscordMessages,
+} from "open-scrapers-toolkit/discord";
+
+const command = buildDiscordScraperSlashCommandDefinition();
+
+const execution = await runScraperPromptToDiscordMessages(
+  "Give me academic records of Vatican Church",
+  {
+    channel: buildDiscordChannelContext(
+      {
+        id: interaction.channel?.id,
+        name:
+          interaction.channel &&
+          "name" in interaction.channel &&
+          typeof interaction.channel.name === "string"
+            ? interaction.channel.name
+            : undefined,
+        nsfw:
+          interaction.channel &&
+          "nsfw" in interaction.channel &&
+          interaction.channel.nsfw === true,
+      },
+      {
+        nsfwEnabledChannelIds: parseDiscordChannelIdList(
+          process.env.DISCORD_ALLOWED_NSFW_CHANNEL_IDS,
+        ),
+      },
+    ),
+    contactEmail: "bot@example.com",
+    includeImages: true,
+    limit: 3,
+    maxEmbedsPerMessage: 3,
+    maxRecords: 3,
+    style: "auto",
+  },
+);
+```
+
+The prompt router currently understands:
+
+- weather and air quality
+- weather alerts
+- earthquakes
+- academic search
+- report/document search
+- subreddit image requests
+- named-source prompts such as `BBC science news`
+
+Use the direct slash-command example in:
+
+- `examples/discord-bots/discordjs-scraper-slash-command.mjs`
 
 ## NSFW and channel safety
 
@@ -199,5 +265,6 @@ Important notes:
 See:
 
 - `examples/discord-bots/discordjs-message-command.mjs`
+- `examples/discord-bots/discordjs-scraper-slash-command.mjs`
 - `examples/discord-bots/discordjs-subreddit-image-command.mjs`
 - `examples/automation/discord-weather-scheduler.mjs`

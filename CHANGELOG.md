@@ -6,6 +6,30 @@ All notable changes to Open Scrapers Toolkit are documented in this file.
 
 - No unreleased changes recorded yet.
 
+## 2026-03-28 14:50:15 +00:00
+
+### Prompt Routing And Catalogue Expansion Workflow
+
+- Expanded the toolkit around a natural-language Discord and app workflow, added another 104 scrapers, and refreshed the docs and wiki so the larger API surface stays understandable.
+
+### Added
+
+- Added prompt-routing helpers in `src/prompt-router.ts`, including `resolveScraperPrompt()` and `runScraperPrompt()`.
+- Added Open-Meteo geocoding support in `src/core/geocoding.ts` for prompt-driven weather and air-quality requests.
+- Added `buildDiscordScraperSlashCommandDefinition()` and `runScraperPromptToDiscordMessages()` to the Discord integration layer.
+- Added `ask` to the CLI for prompt-driven runs and routing previews.
+- Added four prompt-friendly search scrapers: `crossref-academic-search`, `europepmc-academic-search`, `arxiv-academic-search`, and `world-bank-document-search`.
+- Added 100 additional topic scrapers across new arXiv, Crossref, Europe PMC, and World Bank expansion packs, growing the catalogue from 84 to 188 scrapers.
+- Added `docs/prompt-routing.md` and the matching wiki page `docs/wiki/Prompt-Routing.md`.
+- Added `examples/discord-bots/discordjs-scraper-slash-command.mjs`.
+- Added `test/prompt-router.test.ts`.
+
+### Changed
+
+- Updated the main `discord.js` message-command example so it can handle either direct scraper IDs or natural-language prompt requests.
+- Updated `.env.example` and the environment docs with slash-command example variables.
+- Updated README, getting-started, library usage, API reference, Discord bot docs, scraper catalogue docs, roadmap docs, and the corresponding wiki pages for the new prompt-routing and 188-scraper workflow.
+
 ## 2026-03-28 12:04:28 +00:00
 
 ### Library Reference Documentation Workflow

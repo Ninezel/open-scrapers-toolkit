@@ -78,3 +78,18 @@ test("describe prints machine-readable scraper metadata", () => {
   assert.equal(payload.defaults.area, "");
   assert.ok(payload.params.some((parameter) => parameter.key === "severity"));
 });
+
+test("ask can resolve a natural-language prompt without running the scraper", () => {
+  const output = runCli([
+    "ask",
+    "--resolve-only",
+    "Give me academic records of Vatican Church",
+  ]);
+  const payload = JSON.parse(output) as {
+    queryText?: string;
+    scraperId: string;
+  };
+
+  assert.equal(payload.scraperId, "crossref-academic-search");
+  assert.equal(payload.queryText, "Vatican Church");
+});
