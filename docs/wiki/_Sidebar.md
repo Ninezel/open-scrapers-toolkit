@@ -4,6 +4,7 @@ Getting Started
 
 - [Installation And Quick Start](Installation-and-Quick-Start)
 - [CLI Reference](CLI-Reference)
+- [Discord Bot Integration](Discord-Bot-Integration)
 - [Scraper Catalog](Scraper-Catalog)
 
 Architecture

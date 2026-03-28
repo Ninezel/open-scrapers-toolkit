@@ -55,7 +55,7 @@ function buildUserAgent(): string {
   }
 
   const contact = process.env.SCRAPERS_CONTACT_EMAIL?.trim();
-  return contact ? `OpenScrapers/0.1 (${contact})` : "OpenScrapers/0.1";
+  return contact ? `OpenScrapers/0.2.0 (${contact})` : "OpenScrapers/0.2.0";
 }
 
 function buildContext(

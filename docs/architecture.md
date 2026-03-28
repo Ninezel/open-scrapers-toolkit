@@ -15,8 +15,11 @@ The repository is intentionally modular so we can keep adding scrapers without d
 - `src/core/output.ts`: JSON, CSV, and NDJSON export helpers
 - `src/core/health.ts`: source-health report generation
 - `src/core/registry.ts`: scraper discovery
+- `src/library.ts`: programmatic runner functions for app and bot integrations
+- `src/integrations/discord.ts`: Discord-friendly embed and message payload helpers
+- `src/index.ts`: package entry point for library consumers
 - `src/scrapers/`: one file per scraper module
-- `test/`: automated tests for CLI behavior, outputs, helpers, and link ingestion
+- `test/`: automated tests for CLI behavior, library exports, Discord formatting, outputs, helpers, and link ingestion
 
 ## Data flow
 

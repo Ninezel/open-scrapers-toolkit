@@ -7,6 +7,12 @@ npx tsx src/cli.ts run nasa-breaking-news --limit 5
 npx tsx src/cli.ts health --format table
 ```
 
+Install for app or bot usage:
+
+```bash
+npm install github:Ninezel/open-scrapers-toolkit
+```
+
 Bulk-link example:
 
 ```bash

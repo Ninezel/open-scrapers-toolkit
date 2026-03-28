@@ -1,8 +1,26 @@
 {
   "name": "open-scrapers-toolkit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open-source TypeScript scrapers for news, weather, reports, and academic research sources.",
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./discord": {
+      "import": "./dist/integrations/discord.js",
+      "types": "./dist/integrations/discord.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "bin": {
     "open-scrapers": "dist/cli.js"
   },
@@ -11,9 +29,10 @@
   },
   "scripts": {
     "dev": "tsx src/cli.ts",
-    "test": "node --import tsx --test test/catalog.test.ts test/cli.test.ts test/http.test.ts test/output.test.ts test/url-links.test.ts test/utils.test.ts",
+    "test": "node --import tsx --test test/catalog.test.ts test/cli.test.ts test/discord.test.ts test/http.test.ts test/library.test.ts test/output.test.ts test/url-links.test.ts test/utils.test.ts",
     "test:live": "node --import tsx --test test/live-sources.test.ts",
     "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
     "check:src": "tsc -p tsconfig.json --noEmit",
     "check:test": "tsc -p tsconfig.test.json",
     "check": "npm run check:src && npm run check:test",
@@ -28,6 +47,8 @@
     "research",
     "weather",
     "news",
+    "discord-bots",
+    "discordjs",
     "open-source",
     "typescript"
   ],

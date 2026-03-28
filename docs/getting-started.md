@@ -14,6 +14,12 @@ This guide walks through installing the toolkit, exploring the catalog, running 
 npm install
 ```
 
+If you want to embed the toolkit inside a Discord bot or another Node application, you can also install it directly from GitHub:
+
+```bash
+npm install github:Ninezel/open-scrapers-toolkit
+```
+
 ## Inspect the catalog
 
 ```bash
@@ -91,6 +97,24 @@ npx tsx src/cli.ts run arxiv-machine-learning --param query=\"large language mod
 npm run build
 node dist/cli.js list
 ```
+
+## Use it in a Discord bot
+
+```js
+import { resultToDiscordMessages, runScraperById } from "open-scrapers-toolkit";
+
+const result = await runScraperById("bbc-world-news", {
+  contactEmail: "bot@example.com",
+  limit: 3,
+});
+
+const messages = resultToDiscordMessages(result, {
+  maxRecords: 3,
+  maxEmbedsPerMessage: 3,
+});
+```
+
+For a full starter bot example, see `examples/discord-bots/discordjs-message-command.mjs`.
 
 ## Validation
 

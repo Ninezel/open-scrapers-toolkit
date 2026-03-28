@@ -13,3 +13,5 @@ npx tsx src/cli.ts export output/bbc-business-news.json --format all --output ou
 ```
 
 `--save-format` accepts `json`, `csv`, `ndjson`, or `all`.
+
+Programmatic usage for apps and Discord bots is covered separately in [Discord Bot Integration](Discord-Bot-Integration).

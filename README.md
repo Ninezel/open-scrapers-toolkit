@@ -6,12 +6,14 @@ Desktop companion:
 
 - Repository: `https://github.com/Ninezel/open-scrapers-desk`
 - `open-scrapers-desk` provides a PyQt desktop UI for running this toolkit and reading the saved outputs.
+- `open-scrapers-desk` now also includes a Python Discord bot bridge for teams building bots around this toolkit.
 
 ## Why this project exists
 
 - Give people a clean starter repo for scraping and feed collection.
 - Prefer transparent, documented sources over fragile browser automation where possible.
 - Make the project easy to fork, edit, and reuse for personal research, dashboards, automation, and learning.
+- Make the scrapers reusable inside Discord bots and other application code instead of limiting them to terminal-only workflows.
 - Grow beyond a handful of scrapers without turning the repo into a tangle of one-off scripts.
 
 ## Current feature set
@@ -22,6 +24,8 @@ Desktop companion:
 - CSV and NDJSON exports in addition to JSON
 - `health` command for source-health reporting
 - optional OpenAI enrichment for file-based website link scraping
+- programmatic TypeScript library exports for app and bot integrations
+- Discord-friendly message/embed helpers for `discord.js` and compatible libraries
 - Docker packaging and a scheduled GitHub Actions health workflow
 - strict TypeScript checks, automated tests, and optional live-source smoke tests
 
@@ -85,6 +89,39 @@ npx tsx src/cli.ts describe website-links-ai-digest
 npx tsx src/cli.ts run bbc-business-news --limit 5
 npx tsx src/cli.ts run-all --category academic --limit 3 --out-dir output/academic
 ```
+
+## Use it as a library
+
+Install from the GitHub repo:
+
+```bash
+npm install github:Ninezel/open-scrapers-toolkit
+```
+
+Then import it in your app or bot:
+
+```js
+import { resultToDiscordMessages, runScraperById } from "open-scrapers-toolkit";
+
+const result = await runScraperById("bbc-world-news", {
+  contactEmail: "bot@example.com",
+  limit: 3,
+});
+
+const messages = resultToDiscordMessages(result, {
+  maxRecords: 3,
+});
+```
+
+The toolkit also exposes a Discord-only formatter subpath if you want the helper without the rest of the root exports:
+
+```js
+import { resultToDiscordMessages } from "open-scrapers-toolkit/discord";
+```
+
+Example bot starter:
+
+- `examples/discord-bots/discordjs-message-command.mjs`
 
 ## Bulk website list scraping
 
@@ -220,6 +257,7 @@ npm run test:live
 
 - [Getting started](docs/getting-started.md)
 - [Architecture](docs/architecture.md)
+- [Discord bot integration](docs/discord-bots.md)
 - [Scraper catalog](docs/scraper-catalog.md)
 - [Adding a scraper](docs/adding-a-scraper.md)
 - [Compliance and ethics](docs/compliance.md)
@@ -239,3 +277,4 @@ npm run test:live
 - Public source endpoints can change. If a scraper stops working, open an issue with the source, date, error, and any sample response.
 - The bulk link scraper is meant for lawful access to public webpages, not bypassing controls or mass harvesting.
 - AI enrichment is optional and should be treated as a convenience layer, not a guaranteed ground truth.
+- When you use the toolkit in a bot, keep scraper limits polite, identify your contact email where possible, and respect each source's terms and robots guidance.

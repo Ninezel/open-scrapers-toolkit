@@ -9,6 +9,8 @@ Current highlights:
 - `health` source-health reporting
 - `scrape-links` for line-by-line website lists
 - optional OpenAI enrichment for webpage summaries
+- TypeScript library exports for apps and Discord bots
+- Discord-friendly embed/message helpers
 - Docker packaging and scheduled GitHub health automation
 
 Use this wiki as the long-form operational guide for the repository.
