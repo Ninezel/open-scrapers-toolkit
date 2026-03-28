@@ -13,11 +13,14 @@ import type {
 } from "./core/types.js";
 
 export interface LibraryContextOptions {
+  cacheTtlMs?: number;
   contactEmail?: string;
   limit?: number;
   now?: Date;
   outputDir?: string;
   params?: Record<string, string>;
+  retryCount?: number;
+  retryDelayMs?: number;
   userAgent?: string;
 }
 
@@ -28,10 +31,10 @@ export interface RunManyOptions extends LibraryContextOptions {
 
 function defaultUserAgent(contactEmail?: string): string {
   if (contactEmail?.trim()) {
-    return `OpenScrapers/0.2.0 (${contactEmail.trim()})`;
+    return `OpenScrapers/0.3.0 (${contactEmail.trim()})`;
   }
 
-  return "OpenScrapers/0.2.0";
+  return "OpenScrapers/0.3.0";
 }
 
 export function createScraperContext(
@@ -40,6 +43,7 @@ export function createScraperContext(
 ): ScraperContext {
   return {
     contactEmail: options.contactEmail,
+    cacheTtlMs: options.cacheTtlMs,
     limit: options.limit ?? 10,
     now: options.now ?? new Date(),
     outputDir: options.outputDir ?? "output",
@@ -47,6 +51,8 @@ export function createScraperContext(
       ...(scraper.defaults ?? {}),
       ...(options.params ?? {}),
     },
+    retryCount: options.retryCount,
+    retryDelayMs: options.retryDelayMs,
     userAgent: options.userAgent ?? defaultUserAgent(options.contactEmail),
   };
 }

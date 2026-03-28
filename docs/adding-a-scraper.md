@@ -23,9 +23,15 @@ Good factory candidates:
 - indicator-style JSON APIs
 - document search APIs
 
+Starter templates live in `templates/`:
+
+- `templates/rss-scraper.ts`
+- `templates/json-api-scraper.ts`
+- `templates/webpage-scraper.ts`
+
 ## Steps
 
-1. Create `src/scrapers/your-scraper.ts`.
+1. Create `src/scrapers/your-scraper.ts` or add a new config entry to a topic-pack module when a source family clearly belongs together.
 2. Export a `ScraperDefinition`.
 3. Add it to `src/scrapers/index.ts`.
 4. Document defaults and parameters.

@@ -2,6 +2,7 @@ import type { ScrapeResult, ScrapedRecord } from "../core/types.js";
 import type { LibraryContextOptions } from "../library.js";
 import { runScraperById } from "../library.js";
 import { truncateText } from "../core/utils.js";
+import { postJsonWebhook, type PublishResponse } from "../publishers.js";
 
 export interface DiscordEmbedField {
   inline?: boolean;
@@ -139,4 +140,19 @@ export async function runScraperToDiscordMessages(
 ): Promise<DiscordMessagePayload[]> {
   const result = await runScraperById(scraperId, options);
   return resultToDiscordMessages(result, options);
+}
+
+export async function publishDiscordWebhookMessages(
+  webhookUrl: string,
+  result: ScrapeResult,
+  options: DiscordRenderOptions = {},
+): Promise<PublishResponse[]> {
+  const messages = resultToDiscordMessages(result, options);
+  const responses: PublishResponse[] = [];
+
+  for (const payload of messages) {
+    responses.push(await postJsonWebhook(webhookUrl, payload));
+  }
+
+  return responses;
 }

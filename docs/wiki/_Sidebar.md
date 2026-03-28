@@ -5,6 +5,7 @@ Getting Started
 - [Installation And Quick Start](Installation-and-Quick-Start)
 - [CLI Reference](CLI-Reference)
 - [Library Usage](Library-Usage)
+- [Automation And Publishers](Automation-And-Publishers)
 - [Discord Bot Integration](Discord-Bot-Integration)
 - [Scraper Catalog](Scraper-Catalog)
 - [Roadmap](Roadmap)

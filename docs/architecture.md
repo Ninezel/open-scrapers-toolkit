@@ -6,8 +6,9 @@ The repository is intentionally modular so we can keep adding scrapers without d
 
 - `src/cli.ts`: command-line entry point and orchestration
 - `src/core/catalog.ts`: shared catalog filtering and metadata formatting
+- `src/core/cache.ts`: optional response caching for library and CLI workflows
 - `src/core/types.ts`: shared TypeScript interfaces
-- `src/core/http.ts`: polite HTTP helpers and timeout handling
+- `src/core/http.ts`: polite HTTP helpers with timeout, retry, and backoff handling
 - `src/core/rss.ts`: RSS and Atom parsing
 - `src/core/html.ts`: readable webpage extraction for the bulk-link scraper
 - `src/core/ai.ts`: optional OpenAI enrichment helper
@@ -17,8 +18,9 @@ The repository is intentionally modular so we can keep adding scrapers without d
 - `src/core/registry.ts`: scraper discovery
 - `src/library.ts`: programmatic runner functions for app and bot integrations
 - `src/integrations/discord.ts`: Discord-friendly embed and message payload helpers
+- `src/publishers.ts`: generic webhook publishing, snapshots, and filtered health-alert helpers
 - `src/index.ts`: package entry point for library consumers
-- `src/scrapers/`: one file per scraper module
+- `src/scrapers/`: scraper modules and topic-pack collections
 - `test/`: automated tests for CLI behavior, library exports, Discord formatting, outputs, helpers, and link ingestion
 
 ## Data flow
@@ -27,7 +29,7 @@ The repository is intentionally modular so we can keep adding scrapers without d
 2. The CLI builds a `ScraperContext` with a limit, output directory, parameters, user agent, and timestamp.
 3. The scraper fetches a public endpoint or a user-supplied webpage.
 4. Source-specific logic normalizes data into shared `records`.
-5. The CLI prints a preview, saves exports, or builds a health report.
+5. The CLI or library layer prints a preview, saves exports, builds a health report, or publishes the result elsewhere.
 
 ## Normalized result shape
 
@@ -56,6 +58,8 @@ Current factory coverage:
 - World Bank indicator API
 - World Bank document search API
 
+Large catalog expansions can bundle related definitions into topic-pack modules so dozens of very similar scrapers do not duplicate the same plumbing.
+
 Sources such as Open-Meteo, NWS, USGS, and the bulk-link scraper use dedicated modules because their payloads or extraction logic are more specialized.
 
 ## Quality and automation
@@ -66,3 +70,4 @@ Sources such as Open-Meteo, NWS, USGS, and the bulk-link scraper use dedicated m
 - GitHub Actions CI for type checks, tests, and builds
 - scheduled source-health workflow for live endpoint monitoring
 - Docker packaging for running the compiled CLI in containers
+- automation examples for Discord, webhooks, and health alert publishing

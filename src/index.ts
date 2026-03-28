@@ -5,3 +5,4 @@ export * from "./core/output.js";
 export * from "./core/health.js";
 export * from "./library.js";
 export * from "./integrations/discord.js";
+export * from "./publishers.js";

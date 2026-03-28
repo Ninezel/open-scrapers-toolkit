@@ -10,6 +10,7 @@ import {
   formatScraperDetails,
   normalizeCategoryFilter,
 } from "./core/catalog.js";
+import { resolveCacheTtlMs } from "./core/cache.js";
 import { runHealthChecks } from "./core/health.js";
 import {
   defaultOutputPath,
@@ -17,13 +18,24 @@ import {
   printResultSummary,
   saveResultFiles,
 } from "./core/output.js";
+import {
+  buildHealthAlertResult,
+  postJsonWebhook,
+  publishResultSnapshot,
+} from "./publishers.js";
 import { getAllScrapers, getScraperById } from "./core/registry.js";
 import type { ScrapeResult, ScraperContext, ScraperDefinition } from "./core/types.js";
 import { parseKeyValuePairs } from "./core/utils.js";
+import { publishDiscordWebhookMessages } from "./integrations/discord.js";
+import { resolveHttpRetryCount, resolveHttpRetryDelayMs } from "./core/http.js";
 
 loadEnv();
 
 interface SharedRunOptions {
+  alertDiscordWebhook?: string;
+  alertFile?: string;
+  alertStatus?: string;
+  alertWebhook?: string;
   format?: string;
   limit?: string;
   outDir?: string;
@@ -55,7 +67,7 @@ function buildUserAgent(): string {
   }
 
   const contact = process.env.SCRAPERS_CONTACT_EMAIL?.trim();
-  return contact ? `OpenScrapers/0.2.0 (${contact})` : "OpenScrapers/0.2.0";
+  return contact ? `OpenScrapers/0.3.0 (${contact})` : "OpenScrapers/0.3.0";
 }
 
 function buildContext(
@@ -69,12 +81,15 @@ function buildContext(
   const params = parseKeyValuePairs(options.param ?? []);
 
   return {
+    cacheTtlMs: resolveCacheTtlMs(),
     limit: normalizeLimit(options.limit),
     outputDir: options.outDir ?? process.env.SCRAPERS_OUTPUT_DIR ?? "output",
     params: {
       ...(scraper.defaults ?? {}),
       ...params,
     },
+    retryCount: resolveHttpRetryCount(),
+    retryDelayMs: resolveHttpRetryDelayMs(),
     userAgent: buildUserAgent(),
     contactEmail: process.env.SCRAPERS_CONTACT_EMAIL,
     now: new Date(),
@@ -137,6 +152,57 @@ async function saveIfRequested(
 
   for (const savedPath of savedPaths) {
     console.log(`Saved ${result.scraperId} output to ${savedPath}`);
+  }
+}
+
+async function publishHealthAlerts(
+  result: ScrapeResult,
+  options: SharedRunOptions,
+): Promise<void> {
+  const alertResult = buildHealthAlertResult(result, options.alertStatus);
+
+  if (alertResult.records.length === 0) {
+    console.log("No matching health alerts to publish.");
+    return;
+  }
+
+  if (options.alertFile) {
+    const savedPaths = await publishResultSnapshot(
+      alertResult,
+      options.alertFile,
+      normalizeExportFormat("json"),
+    );
+    for (const savedPath of savedPaths) {
+      console.log(`Saved health alerts to ${savedPath}`);
+    }
+  }
+
+  if (options.alertWebhook) {
+    const response = await postJsonWebhook(options.alertWebhook, {
+      alertCount: alertResult.records.length,
+      fetchedAt: alertResult.fetchedAt,
+      scraperId: alertResult.scraperId,
+      summary: alertResult.records.map((record) => ({
+        scraperId: record.metadata?.scraperId,
+        status: record.metadata?.status,
+        title: record.title,
+        summary: record.summary,
+      })),
+    });
+    console.log(`Published health alerts to webhook (${response.status}).`);
+  }
+
+  if (options.alertDiscordWebhook) {
+    const responses = await publishDiscordWebhookMessages(
+      options.alertDiscordWebhook,
+      alertResult,
+      {
+        maxEmbedsPerMessage: 5,
+        maxRecords: 5,
+        titlePrefix: "[Health Alert]",
+      },
+    );
+    console.log(`Published ${responses.length} Discord webhook message(s).`);
   }
 }
 
@@ -440,6 +506,17 @@ program
   .option("--output <file>", "Optional file path used when saving the report.")
   .option("--format <pretty|json|table>", "Console output format.", "table")
   .option(
+    "--alert-status <statuses>",
+    "Comma-separated health statuses to publish, for example error or error,skipped.",
+    "error",
+  )
+  .option("--alert-file <file>", "Optional JSON snapshot path for filtered health alerts.")
+  .option("--alert-webhook <url>", "Optional generic webhook target for filtered health alerts.")
+  .option(
+    "--alert-discord-webhook <url>",
+    "Optional Discord webhook target for filtered health alerts.",
+  )
+  .option(
     "--save-format <json|csv|ndjson|all>",
     "Optional saved export format when --output is supplied.",
   )
@@ -475,6 +552,8 @@ program
       options,
       join(options.outDir ?? "output", "source-health-report.json"),
     );
+
+    await publishHealthAlerts(result, options);
   });
 
 program

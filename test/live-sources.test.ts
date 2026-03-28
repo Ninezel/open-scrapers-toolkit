@@ -12,6 +12,8 @@ test(
     const scraperIds = [
       "bbc-world-news",
       "open-meteo-city-forecast",
+      "un-news-health",
+      "who-afro-featured-news",
       "world-bank-gdp",
     ];
 

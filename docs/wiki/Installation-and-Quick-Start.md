@@ -7,6 +7,14 @@ npx tsx src/cli.ts run nasa-breaking-news --limit 5
 npx tsx src/cli.ts health --format table
 ```
 
+Current catalog size:
+
+- 83 scrapers total
+- 17 news
+- 3 weather
+- 17 reports
+- 46 academic
+
 Install for app or bot usage:
 
 ```bash

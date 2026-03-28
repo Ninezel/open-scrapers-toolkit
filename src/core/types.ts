@@ -36,7 +36,10 @@ export interface ScraperContext {
   params: Record<string, string>;
   userAgent: string;
   contactEmail?: string;
+  cacheTtlMs?: number;
   now: Date;
+  retryCount?: number;
+  retryDelayMs?: number;
 }
 
 export interface ScraperDefinition {

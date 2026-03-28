@@ -1,6 +1,6 @@
 # Open Scrapers Toolkit
 
-Open Scrapers Toolkit is an open-source TypeScript project for collecting structured data from public news feeds, weather services, report APIs, research indexes, and user-supplied website lists. It ships with a reusable scraper framework, a CLI, export tools, health checks, Docker support, and a starter catalog of 28 scrapers that people can run, remix, and extend.
+Open Scrapers Toolkit is an open-source TypeScript project for collecting structured data from public news feeds, weather services, report APIs, research indexes, and user-supplied website lists. It ships with a reusable scraper framework, a CLI, export tools, health checks, cache and retry helpers, publisher utilities, Docker support, and a starter catalog of 83 scrapers that people can run, remix, and extend.
 
 Desktop companion:
 
@@ -18,18 +18,34 @@ Desktop companion:
 
 ## Current feature set
 
-- 28 starter scrapers across `news`, `weather`, `reports`, and `academic`
+- 83 starter scrapers across `news`, `weather`, `reports`, and `academic`
+- category breakdown: 17 `news`, 3 `weather`, 17 `reports`, 46 `academic`
 - rich catalog discovery with `list`, `describe`, category filters, and search
 - `run`, `run-all`, and `scrape-links` CLI flows
 - CSV and NDJSON exports in addition to JSON
 - `health` command for source-health reporting
+- cache, retry, and backoff support for public-source requests
+- webhook and snapshot publisher helpers for apps and bots
+- filtered health-alert publishing to files, webhooks, and Discord webhooks
 - optional OpenAI enrichment for file-based website link scraping
 - programmatic TypeScript library exports for app and bot integrations
 - Discord-friendly message/embed helpers for `discord.js` and compatible libraries
+- automation examples for Discord, webhooks, and nightly health checks
+- contributor templates for RSS, JSON API, and webpage scraper modules
 - Docker packaging and a scheduled GitHub Actions health workflow
 - strict TypeScript checks, automated tests, and optional live-source smoke tests
 
 ## Starter catalog
+
+The catalog now spans:
+
+- BBC, NASA, UN News, WHO AFRO, and Nature feeds
+- Open-Meteo, NWS, and USGS public hazard/weather data
+- World Bank indicators and document searches
+- arXiv, Crossref, Europe PMC, and topic-focused research feeds
+- file-based public webpage digest workflows
+
+This README keeps the overview readable by showing the main families below. For the full live list of 83 scraper IDs, use `npx tsx src/cli.ts list --format json` or see [docs/scraper-catalog.md](docs/scraper-catalog.md).
 
 News:
 
@@ -70,6 +86,16 @@ Academic:
 - `arxiv-machine-learning`
 - `arxiv-climate-science`
 - `arxiv-public-health`
+
+Expanded source families:
+
+- `un-news-*` topic feeds
+- `who-afro-*` feeds
+- `nature-*` topic feeds
+- `crossref-*` topic packs
+- `europepmc-*` topic packs
+- `arxiv-*` topic packs
+- expanded `world-bank-*` document and indicator scrapers
 
 ## Stack
 
@@ -122,6 +148,30 @@ import { resultToDiscordMessages } from "open-scrapers-toolkit/discord";
 Example bot starter:
 
 - `examples/discord-bots/discordjs-message-command.mjs`
+
+Automation and publisher examples:
+
+- `examples/automation/discord-health-alerts.mjs`
+- `examples/automation/webhook-result-publisher.mjs`
+- `examples/automation/nightly-health-check.mjs`
+
+## Cache, retry, and health alerts
+
+Optional environment variables:
+
+```bash
+SCRAPERS_HTTP_RETRIES=1
+SCRAPERS_HTTP_RETRY_DELAY_MS=750
+SCRAPERS_CACHE_TTL_MS=0
+```
+
+Health checks can now publish filtered alerts:
+
+```bash
+npx tsx src/cli.ts health --alert-status error,skipped --alert-file output/source-health-alerts.json
+npx tsx src/cli.ts health --alert-webhook https://example.com/webhook
+npx tsx src/cli.ts health --alert-discord-webhook https://discord.com/api/webhooks/...
+```
 
 ## Bulk website list scraping
 
@@ -221,6 +271,9 @@ Copy `.env.example` to `.env` if you want to customize defaults:
 - `SCRAPERS_CONTACT_EMAIL`
 - `SCRAPERS_OUTPUT_DIR`
 - `SCRAPERS_HTTP_TIMEOUT_MS`
+- `SCRAPERS_HTTP_RETRIES`
+- `SCRAPERS_HTTP_RETRY_DELAY_MS`
+- `SCRAPERS_CACHE_TTL_MS`
 - `OPENAI_API_KEY`
 - `OPENAI_MODEL`
 - `OPENAI_BASE_URL`
@@ -258,9 +311,11 @@ npm run test:live
 - [Getting started](docs/getting-started.md)
 - [Architecture](docs/architecture.md)
 - [Library usage](docs/library-usage.md)
+- [Automation and publishers](docs/automation.md)
 - [Discord bot integration](docs/discord-bots.md)
 - [Scraper catalog](docs/scraper-catalog.md)
 - [Adding a scraper](docs/adding-a-scraper.md)
+- [Troubleshooting](docs/troubleshooting.md)
 - [Compliance and ethics](docs/compliance.md)
 - [Roadmap](docs/roadmap.md)
 - [Release workflow](docs/release-workflow.md)
@@ -269,10 +324,10 @@ npm run test:live
 
 Current next-step priorities for the toolkit are:
 
-- add another wave of official and public-interest sources such as WHO, UN, OECD, and more hazard datasets
-- strengthen the reusable library surface with cache, retry, and publisher helpers
-- add health alert publishing so failed sources can be surfaced to bots, dashboards, or maintainers automatically
-- improve contributor workflows with more fixtures, templates, and source-specific test coverage
+- add another wave of official and public-interest sources beyond the current 83, with OECD and more humanitarian/hazard coverage still high on the list
+- stabilize the library and publisher surface for apps, bots, and webhook-driven automations
+- keep improving live-source monitoring, source-specific troubleshooting, and parser regression coverage
+- expand contributor fixtures, templates, and source-family examples so large catalog growth stays maintainable
 
 The full planning notes live in [docs/roadmap.md](docs/roadmap.md).
 

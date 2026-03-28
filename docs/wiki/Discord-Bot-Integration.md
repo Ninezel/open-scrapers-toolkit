@@ -14,6 +14,7 @@ npm install github:Ninezel/open-scrapers-toolkit
 - registry helpers
 - programmatic scraper runners
 - Discord message/embed formatters
+- Discord webhook publishing helpers
 
 ## Typical flow
 
@@ -46,6 +47,10 @@ import { runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
 Starter file:
 
 - `examples/discord-bots/discordjs-message-command.mjs`
+
+Related automation examples:
+
+- `examples/automation/discord-health-alerts.mjs`
 
 Keep bot limits polite and pass a contact email where possible.
 

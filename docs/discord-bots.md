@@ -83,6 +83,19 @@ const messages = await runScraperToDiscordMessages("nasa-breaking-news", {
 });
 ```
 
+If you want to publish a result to a Discord webhook:
+
+```js
+import { publishDiscordWebhookMessages, runScraperById } from "open-scrapers-toolkit";
+
+const result = await runScraperById("un-news-health", {
+  contactEmail: "bot@example.com",
+  limit: 3,
+});
+
+await publishDiscordWebhookMessages("https://discord.com/api/webhooks/...", result);
+```
+
 ## Parameters and safety
 
 - Keep `limit` low for chat-oriented commands.

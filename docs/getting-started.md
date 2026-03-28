@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide walks through installing the toolkit, exploring the catalog, running scrapers, using the TypeScript library exports, exporting results, and working with the file-based website link workflow.
+This guide walks through installing the toolkit, exploring the catalog, running scrapers, using the TypeScript library exports, exporting results, publishing health alerts, and working with the file-based website link workflow.
 
 ## Requirements
 
@@ -43,6 +43,13 @@ npm run list
 npx tsx src/cli.ts list --category weather --search forecast
 npx tsx src/cli.ts describe website-links-ai-digest
 ```
+
+The current catalog includes 83 scrapers:
+
+- 17 news scrapers
+- 3 weather scrapers
+- 17 report/public-data scrapers
+- 46 academic scrapers
 
 ## Run a single scraper
 
@@ -88,6 +95,9 @@ npx tsx src/cli.ts scrape-links examples/url-lists/demo-links.txt --use-ai auto 
 ```bash
 npx tsx src/cli.ts health --format table
 npx tsx src/cli.ts health --category weather --format json --output output/source-health-report.json
+npx tsx src/cli.ts health --alert-status error,skipped --alert-file output/source-health-alerts.json
+npx tsx src/cli.ts health --alert-status error --alert-webhook https://example.com/webhook
+npx tsx src/cli.ts health --alert-status error --alert-discord-webhook https://discord.com/api/webhooks/...
 ```
 
 ## Export an existing saved result
@@ -149,6 +159,17 @@ const messages = resultToDiscordMessages(result, {
 For a full starter bot example, see `examples/discord-bots/discordjs-message-command.mjs`.
 
 For the full programmatic API guide, see [library-usage.md](library-usage.md).
+
+For automation, webhook, and publisher examples, see [automation.md](automation.md).
+
+## Useful environment toggles
+
+```bash
+SCRAPERS_HTTP_TIMEOUT_MS=20000
+SCRAPERS_HTTP_RETRIES=1
+SCRAPERS_HTTP_RETRY_DELAY_MS=750
+SCRAPERS_CACHE_TTL_MS=0
+```
 
 ## Validation
 

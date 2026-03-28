@@ -16,6 +16,9 @@ npm install github:Ninezel/open-scrapers-toolkit
 - `runScrapersByCategory()`
 - `runScrapersFromCatalog()`
 - `runLibraryHealth()`
+- `postJsonWebhook()`
+- `publishResultSnapshot()`
+- `buildHealthAlertResult()`
 - `resultToDiscordMessages()`
 
 Discord-only helper import:
@@ -47,10 +50,21 @@ const result = await runScraperById("bbc-world-news", {
 });
 ```
 
+Useful library options:
+
+- `cacheTtlMs`
+- `retryCount`
+- `retryDelayMs`
+- `contactEmail`
+- `limit`
+- `params`
+- `outputDir`
+
 ## Good practices
 
 - keep bot limits low
 - pass a contact email where possible
+- use cache and retry settings thoughtfully
 - respect source-specific limits and policies
 - use the CLI for file exports and shell automation
 - use the library for in-process bot and app integrations

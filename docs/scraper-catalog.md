@@ -1,6 +1,13 @@
 # Scraper Catalog
 
-This page explains what each scraper is for, which parameters it accepts, and how to choose the right scraper for a job.
+This page explains what each scraper family is for, which parameters it accepts, and how to choose the right scraper for a job. The toolkit now ships with 83 scrapers.
+
+## Catalog totals
+
+- `news`: 17
+- `weather`: 3
+- `reports`: 17
+- `academic`: 46
 
 ## How to inspect the catalog live
 
@@ -26,6 +33,12 @@ npx tsx src/cli.ts describe website-links-ai-digest
   Pulls NASA news releases and mission updates. No extra parameters.
 - `nasa-image-of-the-day`
   Pulls NASA image posts with summary text. No extra parameters.
+- `un-news-*`
+  Topic feeds from UN News covering climate change, health, human rights, peace and security, women, migrants and refugees, humanitarian aid, and the SDGs. No extra parameters.
+- `who-afro-*`
+  WHO AFRO featured news, emergencies, and speeches. No extra parameters.
+- `nature-*`
+  Nature topic feeds live in the academic category, but they behave like fast-moving feed scrapers with no extra parameters.
 
 ## Weather scrapers
 
@@ -79,6 +92,30 @@ npx tsx src/cli.ts describe website-links-ai-digest
   Searches arXiv for climate-science papers. Parameter: `query`.
 - `arxiv-public-health`
   Searches arXiv for public-health papers. Parameter: `query`.
+- `nature-*`
+  Nature journal topic feeds for climate change, machine learning, genetics, cancer, and ecology. No extra parameters.
+- `crossref-*` expansion pack
+  Adds biodiversity, disaster risk, digital health, education policy, environmental justice, food security, public policy, sustainable finance, urban planning, and water security topic searches.
+- `europepmc-*` expansion pack
+  Adds antimicrobial resistance, digital health, environmental health, epidemiology, genomics, health systems, maternal health, nutrition, pediatrics, and vaccine research topic searches.
+- `arxiv-*` expansion pack
+  Adds computer vision, cybersecurity, data science, disaster response, medical imaging, natural language processing, quantum computing, remote sensing, renewable energy systems, and robotics.
+
+## Additional World Bank expansion scrapers
+
+- `world-bank-agriculture-documents`
+- `world-bank-disaster-risk-documents`
+- `world-bank-energy-documents`
+- `world-bank-governance-documents`
+- `world-bank-social-protection-documents`
+- `world-bank-access-to-electricity`
+- `world-bank-co2-emissions`
+- `world-bank-life-expectancy`
+- `world-bank-unemployment`
+
+## Topic-pack note
+
+The larger source families are intentionally grouped into topic-pack modules so we can add many closely related scrapers without turning the repo into 83 fully independent one-off files. Use `describe <scraper-id>` when you want the exact defaults and parameters for one entry.
 
 ## Common parameter examples
 

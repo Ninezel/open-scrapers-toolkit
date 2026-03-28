@@ -25,6 +25,7 @@ Root package exports include:
 - registry access through the main library surface
 - runner helpers such as `runScraperById()`
 - health reporting with `runLibraryHealth()`
+- generic publisher helpers such as `postJsonWebhook()` and `publishResultSnapshot()`
 - Discord payload formatting helpers such as `resultToDiscordMessages()`
 
 Discord-only subpath:
@@ -32,6 +33,8 @@ Discord-only subpath:
 ```js
 import { resultToDiscordMessages, runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
 ```
+
+The root package also re-exports publisher helpers such as `buildHealthAlertResult()`, `postJsonWebhook()`, and `publishResultSnapshot()`.
 
 ## Typical usage flow
 
@@ -81,10 +84,13 @@ const result = await runScraperById("open-meteo-city-forecast", {
 
 Useful options:
 
+- `cacheTtlMs`: enable local response caching for GET requests
 - `contactEmail`: helpful identifier for polite requests
 - `limit`: cap the returned records
 - `params`: scraper-specific parameters
 - `outputDir`: useful if your own code also wants file output conventions
+- `retryCount`: retry count for transient request failures
+- `retryDelayMs`: backoff base delay for retry attempts
 - `userAgent`: override the default user agent if needed
 - `now`: inject a fixed clock during tests
 
@@ -115,6 +121,57 @@ const health = await runLibraryHealth({
 ```
 
 The returned value is a standard `ScrapeResult`, so you can store it, publish it, or transform it like any other scraper result.
+
+## Publish results
+
+Generic webhook example:
+
+```js
+import { postJsonWebhook, runScraperById } from "open-scrapers-toolkit";
+
+const result = await runScraperById("bbc-world-news", {
+  limit: 3,
+});
+
+await postJsonWebhook("https://example.com/webhook", result);
+```
+
+Save a snapshot from code:
+
+```js
+import { publishResultSnapshot } from "open-scrapers-toolkit";
+```
+
+Publish Discord-style messages to a webhook:
+
+```js
+import { publishDiscordWebhookMessages, runScraperById } from "open-scrapers-toolkit";
+
+const result = await runScraperById("un-news-health", {
+  contactEmail: "bot@example.com",
+  limit: 2,
+});
+
+await publishDiscordWebhookMessages(
+  "https://discord.com/api/webhooks/...",
+  result,
+  {
+    maxRecords: 2,
+  },
+);
+```
+
+Health alert filtering:
+
+```js
+import { buildHealthAlertResult, runLibraryHealth } from "open-scrapers-toolkit";
+
+const health = await runLibraryHealth({
+  limit: 1,
+});
+
+const alerts = buildHealthAlertResult(health, "error,skipped");
+```
 
 ## Normalized result shape
 
@@ -172,6 +229,15 @@ import { runScraperToDiscordMessages } from "open-scrapers-toolkit/discord";
 
 Use this when you want a direct scrape-to-message flow inside `discord.js` or a compatible library.
 
+## Export and file-saving choices
+
+The library functions are intentionally centered on in-process results. Use the CLI when you want:
+
+- JSON, CSV, or NDJSON files written for you
+- one-off maintenance jobs
+- shell-friendly health reporting
+- bulk-link ingestion from a text file path
+
 ## When to use the CLI instead
 
 Prefer the CLI when you want:
@@ -193,6 +259,7 @@ Prefer the library when you want:
 
 - Keep per-command limits low in bots.
 - Pass a contact email when you can.
+- Use caching carefully when your use case values lower source traffic over the freshest possible response.
 - Respect source-specific policies and rate limits.
 - Treat AI enrichment as optional convenience, not source truth.
 - Avoid exposing every scraper to every user if your bot serves multiple audiences.
